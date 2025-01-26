@@ -27,7 +27,7 @@ const StyledModal = styled.div`
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-lg);
   z-index: 9999;
-  width: calc(100% - 50%);
+  width: calc(100% - 33.33%);
   border: 1px solid var(--color-grey-100);
   @media only screen and (max-width: 600px) {
     width: calc(100% - 5%);
@@ -42,7 +42,7 @@ const HeaderModal = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0.8rem 0.7rem;
-  background-color: var(--color-grey-50);
+  background-color: var(--color-brand-50);
   border-bottom: 1px solid var(--color-grey-100);
 `;
 const FooterModal = styled.div`
@@ -93,7 +93,7 @@ function Body({ children, modalName, title }) {
         </ModalContainer>
         <FooterModal>
           <Button variation="danger" onClick={close}>
-            <HiOutlineXMark /> Cancel
+            <HiOutlineXMark /> الغاء
           </Button>
         </FooterModal>
       </StyledModal>

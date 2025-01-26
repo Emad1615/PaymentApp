@@ -19,9 +19,9 @@ const sizes = {
 };
 const variations = {
   primary: css`
-    background-color: var(--color-primary);
+    background-color: var(--color-brand-500);
     &:hover {
-      background-color: #0961b9;
+      background-color: var(--color-brand-600);;
     }
   `,
   success: css`

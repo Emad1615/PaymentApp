@@ -128,6 +128,7 @@ const GlobalStyle = createGlobalStyle`
     }
 html {
   font-size: 62.5%;
+  font-family: "Rubik", serif !important  ;
 }
 *{
   font-family: "Rubik", serif !important  ;
@@ -139,6 +140,7 @@ body {
   transition: color 0.3s, background-color 0.3s;
   min-height: 100vh;
   line-height: 1.5;
+  font-family: "Rubik", serif !important  ;
   font-size: 1.6rem;
 }
 
@@ -195,6 +197,7 @@ h5,
 h6 {
   overflow-wrap: break-word;
   hyphens: auto;
+  font-family: "Rubik", serif !important  ;
 }
 
 img {
