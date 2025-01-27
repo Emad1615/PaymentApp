@@ -8,6 +8,7 @@ import { MdCancel } from 'react-icons/md';
 import { useState } from 'react';
 import { addDays } from 'date-fns';
 import toast from 'react-hot-toast';
+import DataGrid, { Column, Editing, Paging, Export } from 'devextreme-react/data-grid';
 
 const Form = styled.div`
   margin: 2rem 0;
@@ -113,14 +114,36 @@ function PaymentForm() {
         <Button
           type="button"
           variation="purpleSharp"
-          onClick={handleAddPaymentType}>
+          onClick={handleAddPaymentType}
+          disabled={!paymentType || !year || !branchs.length || !educationTypes.length || data.length === paymentType?.number}>
           <FaRegEye /> استعراض
+        </Button>
+        <Button
+          type="button"
+          variation="primary"
+          onClick={handleAddPaymentType}>
+          <FaSearch /> بحــث
         </Button>
         <Button type="button" variation="danger" onClick={() => clearData()}>
           <MdCancel />
           الغاء
         </Button>
       </ButtonGroup>
+      {/* DevExtreme DataGrid */}
+      <DataGrid dataSource={data} showBorders={true} idField="id">
+        <Column dataField="id" caption="ID" width={50} />
+        <Column dataField="paymentTypeId" caption="نوع الدفع" />
+        <Column dataField="year" caption="العام الدراسي" />
+        <Column dataField="branchs" caption="الفروع" />
+        <Column dataField="educationTypes" caption="نوع التعليم" />
+        <Column dataField="percentage" caption="النسبة" />
+        <Column dataField="startDate" caption="تاريخ البدء" dataType="date" />
+        <Column dataField="endDate" caption="تاريخ الانتهاء" dataType="date" />
+
+        <Editing allowUpdating={true} allowDeleting={true} allowAdding={true} />
+        <Paging defaultPageSize={10} />
+        <Export enabled={true} />
+      </DataGrid>
     </Form>
   );
 }
