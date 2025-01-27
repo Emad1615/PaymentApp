@@ -3,15 +3,17 @@ import AddPaymentType from './AddPaymentType';
 import CustomSelect from '../ui/CustomSelect';
 import ButtonGroup from '../ui/ButtonGroup';
 import Button from '../ui/Button';
-import { FaRegEye, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaRegEye, FaSearch } from 'react-icons/fa';
 import { MdCancel } from 'react-icons/md';
 import { useState } from 'react';
 import { addDays } from 'date-fns';
 import toast from 'react-hot-toast';
 import DataGrid, { Column, Editing, Paging } from 'devextreme-react/data-grid';
 import { DateBox, NumberBox } from 'devextreme-react';
+import { ClipLoader } from 'react-spinners';
 
 import 'devextreme/dist/css/dx.light.css';
+import AddPaymentTypeModal from './AddPaymentTypeModal';
 
 const Form = styled.div`
   margin: 2rem 0;
@@ -39,8 +41,34 @@ function PaymentForm() {
   const [data, setData] = useState([]);
   const [realData, setRealData] = useState([]);
   const [showRealTable, setShowRealTable] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  function handleAddPaymentType() {
+  const spinnerStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: '20px',
+    color: '#fff',
+    borderRadius: '5px',
+  };
+
+  const handleAddPaymentType = () => {
+    setShowModal(true); // Show modal on button click
+  };
+
+  const handleSavePaymentType = (newPaymentType) => {
+    // Save the new payment type (add it to the list or update your state)
+    setPaymentType((prevTypes) => [...prevTypes, newPaymentType]);
+    toast.success("تم إضافة نوع الدفع بنجاح");
+  };
+  const closeModal = () => {
+    setShowModal(false); // Close modal
+  };
+
+  function handleAddPayment() {
     if (!paymentType || !year || !branchs.length || !educationTypes.length) {
       toast.error(`يجب اختيار نوع الدفع والعام الدراسي والفروع ونوع التعليم`);
       return;
@@ -49,6 +77,9 @@ function PaymentForm() {
       toast.error(`تم اضافة الدفعات بالفعل`);
       return;
     }
+
+    setLoading(true);
+
     let Arr = [];
     Array.from({ length: paymentType.number }, (_, i) => i).map((_, idx) =>
       Arr.push({
@@ -69,12 +100,19 @@ function PaymentForm() {
       }),
     );
     setData(Arr);
+    setRealData([]);
     setShowRealTable(false);
+    setLoading(false);
   }
 
-  function handleRealPaymentType() {
-    setRealData(PaymentSettings);
-    setShowRealTable(true);
+  function handleRealPayment() {
+    setLoading(true);
+    setTimeout(() => {
+      setRealData(PaymentSettings);
+      setData([]);
+      setShowRealTable(true);
+      setLoading(false);
+    }, 2000);
   }
   function clearData() {
     setPaymentType(null);
@@ -138,7 +176,16 @@ function PaymentForm() {
           setValue={setPaymentType}
           placeholder="اختر نوع الدفع"
         />
-        <AddPaymentType />
+        {/* <AddPaymentType /> */}
+        
+        <Button type="button" onClick={handleAddPaymentType}> 
+          <FaPlus /> إضافة
+        </Button>
+        <AddPaymentTypeModal
+        isOpen={showModal}
+        closeModal={closeModal}
+        onSave={handleSavePaymentType}
+        />
       </Row>
       <Row>
         <CustomSelect
@@ -169,24 +216,31 @@ function PaymentForm() {
         <Button
           type="button"
           variation="purpleSharp"
-          onClick={handleAddPaymentType}
-          disabled={!paymentType || !year || !branchs.length || !educationTypes.length}
+          onClick={handleAddPayment}
+          disabled={loading || !paymentType || !year || !branchs.length || !educationTypes.length}
         >
-          <FaRegEye /> استعراض
+          {loading ? <ClipLoader size={20} color={"#fff"} /> : <FaRegEye />} استعراض
         </Button>
         <Button
           type="button"
           variation="primary"
-          onClick={handleRealPaymentType}>
-          <FaSearch /> بحــث
+          onClick={handleRealPayment}
+          disabled={loading}
+        >
+          {loading ? <ClipLoader size={20} color={"#fff"} /> : <FaSearch />} بحــث
         </Button>
         <Button type="button" variation="danger" onClick={() => clearData()}>
           <MdCancel />
           الغاء
         </Button>
       </ButtonGroup>
+
+      {loading && <div style={spinnerStyle}>جاري التحميل...</div>}
+      {loading && <ClipLoader size={20} color={"#fff"} />}
+
       <DataGrid id='DivRunTimeTable' dataSource={data} showBorders={true} idField="id"
         style={{ display: showRealTable ? 'none' : 'block' }}
+        disabled={loading}
       >
         <Column dataField="id" caption="ID" visible={false} width={50} />
         <Column dataField="paymentTypeId" caption="نوع الدفع" />
@@ -238,7 +292,8 @@ function PaymentForm() {
         <Paging defaultPageSize={10} />
       </DataGrid>
       <DataGrid id='gridRealTable' dataSource={realData} showBorders={true} idField="id"
-        style={{ display: showRealTable ? 'block' : 'none' }} 
+        style={{ display: showRealTable ? 'block' : 'none' }}
+        disabled={loading}
       >
         <Column dataField="id" caption="ID" visible={false} width={50} />
         <Column dataField="paymentTypeId" caption="نوع الدفع" />
