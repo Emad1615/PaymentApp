@@ -54,6 +54,12 @@ const variations = {
       background-color: var(--color-purple-sharp-700);
     }
   `,
+  dark: css`
+    background-color: var(--color-grey-900);
+    &:hover {
+      background-color: var(--color-grey-900);
+    }
+  `,
   warning: css`
     background-color: var(--color-warning);
     &:hover {
@@ -81,8 +87,8 @@ const Button = styled.button`
   align-items: center;
   gap: 0.5rem;
   text-align: center;
-  ${(props) => sizes[props.size]}
-  ${(props) => variations[props.variation]}
+  ${(props) => sizes[props.size]};
+  ${(props) =>  (props.disabled ?  variations['dark'] :  variations[props.variation] )};
   
   &:focus {
     outline: none;
@@ -95,5 +101,6 @@ const Button = styled.button`
 export default Button;
 Button.defaultProps = {
   variation: "primary",
+  disabled: false,
   size: "md",
 };
