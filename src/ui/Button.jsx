@@ -36,6 +36,24 @@ const variations = {
       background-color: #a31616;
     }
   `,
+  greenSoft: css`
+    background-color: var(--color-green-soft);
+    &:hover {
+      background-color: var(--color-green-soft-700);
+    }
+  `,
+  greenSharp: css`
+    background-color: var(--color-green-sharp);
+    &:hover {
+      background-color: var(--color-green-sharp-700);
+    }
+  `,
+  purpleSharp: css`
+    background-color: var(--color-purple-sharp);
+    &:hover {
+      background-color: var(--color-purple-sharp-700);
+    }
+  `,
   warning: css`
     background-color: var(--color-warning);
     &:hover {
