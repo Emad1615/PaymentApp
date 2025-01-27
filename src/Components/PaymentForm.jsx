@@ -6,6 +6,8 @@ import Button from '../ui/Button';
 import { FaRegEye } from 'react-icons/fa';
 import { MdCancel } from 'react-icons/md';
 import { useState } from 'react';
+import { addDays } from 'date-fns';
+import toast from 'react-hot-toast';
 
 const Form = styled.div`
   margin: 2rem 0;
@@ -32,19 +34,35 @@ function PaymentForm() {
   const [educationTypes, setEducationTypes] = useState([]);
   const [data, setData] = useState([]);
   function handleAddPaymentType() {
-    Array.from({ length: paymentType.number }).forEach((_, index) => {
-      setData((prev) => [
-        ...prev,
-        {
-          id: Math.random(),
-          paymentTypeId: paymentType.value,
-          year: year.value,
-          branchIds: branchs.map((branch) => branch.value),
-          educationTypeIds: educationTypes.map((education) => education.value),
-        },
-      ]);
-    });
-    console.log(data);
+    if (!paymentType || !year || !branchs.length || !educationTypes.length) {
+      toast.error(`يجب اختيار نوع الدفع والعام الدراسي والفروع ونوع التعليم`);
+      return;
+    }
+    if (data.length === paymentType.number) {
+      toast.error(`تم اضافة الدفعات بالفعل`);
+      return;
+    }
+    let Arr = [];
+    Array.from({ length: paymentType.number }, (_, i) => i).map((_, idx) =>
+      Arr.push({
+        id: idx + 1,
+        paymentTypeId: paymentType.value,
+        year: year.value,
+        branchIds: branchs.map((branch) => branch.value),
+        branchs: branchs.map((branch) => branch.label).join(' - '),
+        educationTypeIds: educationTypes.map((education) => education.value),
+        educationTypes: educationTypes
+          .map((education) => education.label)
+          .join(' - '),
+        percentage: 100 / paymentType.number,
+        startDate: idx === 0 ? new Date() : addDays(Arr[idx - 1]?.endDate, 1),
+        endDate:
+          idx === 0
+            ? addDays(new Date(), 10)
+            : addDays(Arr[idx - 1]?.endDate, 11),
+      }),
+    );
+    setData(Arr);
   }
   function clearData() {
     setPaymentType(null);
@@ -52,8 +70,8 @@ function PaymentForm() {
     setBranchs(null);
     setEducationTypes([]);
     setData([]);
-    console.log('clear');
   }
+  console.log(data);
   return (
     <Form>
       <Row>
@@ -91,7 +109,7 @@ function PaymentForm() {
           placeholder="اختر نوع التعليم"
         />
       </Row>
-      <ButtonGroup justifyContent="end">
+      <ButtonGroup justifycontent="end">
         <Button
           type="button"
           variation="primary"

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 const variations = {
   horizontal: css`
     flex-direction: row;
-    justify-content: ${(props) => props.justifyContent};
+    justify-content: ${(props) => props.justifycontent};
     align-items: center;
     gap: 1rem;
   `,
@@ -31,5 +31,5 @@ export default ButtonGroup;
 
 ButtonGroup.defaultProps = {
   variation: 'horizontal',
-  justifyContent: 'center',
+  justifycontent: 'center',
 };
