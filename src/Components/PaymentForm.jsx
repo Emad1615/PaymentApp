@@ -3,7 +3,7 @@ import AddPaymentType from './AddPaymentType';
 import CustomSelect from '../ui/CustomSelect';
 import ButtonGroup from '../ui/ButtonGroup';
 import Button from '../ui/Button';
-import { FaRegEye } from 'react-icons/fa';
+import { FaRegEye, FaSearch } from 'react-icons/fa';
 import { MdCancel } from 'react-icons/md';
 import { useState } from 'react';
 
@@ -25,14 +25,17 @@ const Row = styled.div`
     align-items: start;
   }
 `;
-function PaymentForm() {
+function PaymentForm()
+{
   const [paymentType, setPaymentType] = useState(null);
   const [year, setYear] = useState(null);
   const [branchs, setBranchs] = useState([]);
   const [educationTypes, setEducationTypes] = useState([]);
   const [data, setData] = useState([]);
-  function handleAddPaymentType() {
-    Array.from({ length: paymentType.number }).forEach((_, index) => {
+  function handleAddPaymentType()
+  {
+    Array.from({ length: paymentType.number }).forEach((_, index) =>
+    {
       setData((prev) => [
         ...prev,
         {
@@ -46,7 +49,8 @@ function PaymentForm() {
     });
     console.log(data);
   }
-  function clearData() {
+  function clearData()
+  {
     setPaymentType(null);
     setYear(null);
     setBranchs(null);
@@ -94,15 +98,23 @@ function PaymentForm() {
       <ButtonGroup justifyContent="end">
         <Button
           type="button"
-          variation="primary"
+          variation="purpleSharp"
           onClick={handleAddPaymentType}>
           <FaRegEye /> استعراض
+        </Button>
+        <Button
+          type="button"
+          variation="primary"
+          onClick={handleAddPaymentType}>
+          <FaSearch /> بحــث
         </Button>
         <Button type="button" variation="danger" onClick={() => clearData()}>
           <MdCancel />
           الغاء
         </Button>
       </ButtonGroup>
+
+
     </Form>
   );
 }
