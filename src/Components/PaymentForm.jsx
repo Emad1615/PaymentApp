@@ -37,6 +37,9 @@ function PaymentForm() {
   const [branchs, setBranchs] = useState([]);
   const [educationTypes, setEducationTypes] = useState([]);
   const [data, setData] = useState([]);
+  const [realData, setRealData] = useState([]);
+  const [showRealTable, setShowRealTable] = useState(false);
+
   function handleAddPaymentType() {
     if (!paymentType || !year || !branchs.length || !educationTypes.length) {
       toast.error(`يجب اختيار نوع الدفع والعام الدراسي والفروع ونوع التعليم`);
@@ -66,6 +69,12 @@ function PaymentForm() {
       }),
     );
     setData(Arr);
+    setShowRealTable(false);
+  }
+
+  function handleRealPaymentType() {
+    setRealData(PaymentSettings);
+    setShowRealTable(true);
   }
   function clearData() {
     setPaymentType(null);
@@ -73,35 +82,37 @@ function PaymentForm() {
     setBranchs(null);
     setEducationTypes([]);
     setData([]);
+    setRealData([]);
+    setShowRealTable(false);
   }
-// Function to ensure total percentage equals 100
-function validateTotalPercentage() {
-  const totalPercentage = data.reduce((sum, row) => sum + row.percentage, 0);
-  if (totalPercentage !== 100) {
-    toast.error("إجمالي النسبة يجب أن يكون 100");
-    return false;
+  // Function to ensure total percentage equals 100
+  function validateTotalPercentage() {
+    const totalPercentage = data.reduce((sum, row) => sum + row.percentage, 0);
+    if (totalPercentage !== 100) {
+      toast.error("إجمالي النسبة يجب أن يكون 100");
+      return false;
+    }
+    return true;
   }
-  return true;
-}
 
-// Function to update percentage and adjust others to maintain total 100
-function adjustPercentages(updatedIndex, updatedValue) {
-  const total = data.reduce((sum, row, index) => (index !== updatedIndex ? sum + row.percentage : sum), 0);
-  const remaining = 100 - total;
-  const updatedData = [...data];
-  updatedData[updatedIndex].percentage = updatedValue;
+  // Function to update percentage and adjust others to maintain total 100
+  function adjustPercentages(updatedIndex, updatedValue) {
+    const total = data.reduce((sum, row, index) => (index !== updatedIndex ? sum + row.percentage : sum), 0);
+    const remaining = 100 - total;
+    const updatedData = [...data];
+    updatedData[updatedIndex].percentage = updatedValue;
 
-  // Adjust other percentages to make the total sum 100
-  let remainingRows = updatedData.filter((_, index) => index !== updatedIndex);
-  let totalRemaining = remaining;
-  remainingRows.forEach((row, index) => {
-    const newPercentage = totalRemaining / remainingRows.length;
-    updatedData[index].percentage = newPercentage;
-    totalRemaining -= newPercentage;
-  });
+    // Adjust other percentages to make the total sum 100
+    let remainingRows = updatedData.filter((_, index) => index !== updatedIndex);
+    let totalRemaining = remaining;
+    remainingRows.forEach((row, index) => {
+      const newPercentage = totalRemaining / remainingRows.length;
+      updatedData[index].percentage = newPercentage;
+      totalRemaining -= newPercentage;
+    });
 
-  setData(updatedData);
-}
+    setData(updatedData);
+  }
 
   // Validate endDate is not before startDate
   function validateEndDate(e) {
@@ -160,13 +171,13 @@ function adjustPercentages(updatedIndex, updatedValue) {
           variation="purpleSharp"
           onClick={handleAddPaymentType}
           disabled={!paymentType || !year || !branchs.length || !educationTypes.length}
-          >
+        >
           <FaRegEye /> استعراض
         </Button>
         <Button
           type="button"
           variation="primary"
-          onClick={handleAddPaymentType}>
+          onClick={handleRealPaymentType}>
           <FaSearch /> بحــث
         </Button>
         <Button type="button" variation="danger" onClick={() => clearData()}>
@@ -174,7 +185,9 @@ function adjustPercentages(updatedIndex, updatedValue) {
           الغاء
         </Button>
       </ButtonGroup>
-      <DataGrid dataSource={data} showBorders={true} idField="id">
+      <DataGrid id='DivRunTimeTable' dataSource={data} showBorders={true} idField="id"
+        style={{ display: showRealTable ? 'none' : 'block' }}
+      >
         <Column dataField="id" caption="ID" visible={false} width={50} />
         <Column dataField="paymentTypeId" caption="نوع الدفع" />
         <Column dataField="year" caption="العام الدراسي" />
@@ -218,14 +231,34 @@ function adjustPercentages(updatedIndex, updatedValue) {
           caption="تاريخ الانتهاء"
           dataType="date"
           editCellComponent={DateBox}
-          onValueChanged={validateEndDate} 
+          onValueChanged={validateEndDate}
         />
 
-        <Editing
-          allowUpdating={true}  // Allow updates
-          allowAdding={false}   // Disallow adding new rows
-          allowDeleting={false} // Disallow deleting rows
-          mode="cell"  // Enable cell editing, not row-based
+        <Editing allowUpdating={true} allowAdding={false} allowDeleting={false} mode="cell" />
+        <Paging defaultPageSize={10} />
+      </DataGrid>
+      <DataGrid id='gridRealTable' dataSource={realData} showBorders={true} idField="id"
+        style={{ display: showRealTable ? 'block' : 'none' }} 
+      >
+        <Column dataField="id" caption="ID" visible={false} width={50} />
+        <Column dataField="paymentTypeId" caption="نوع الدفع" />
+        <Column dataField="year" caption="العام الدراسي" />
+        <Column dataField="branch" caption="الفروع" />
+        <Column dataField="educationType" caption="نوع التعليم" />
+
+        <Column
+          dataField="percentage"
+          caption="النسبة"
+        />
+        <Column
+          dataField="startDate"
+          caption="تاريخ البدء"
+          dataType="date"
+        />
+        <Column
+          dataField="endDate"
+          caption="تاريخ الانتهاء"
+          dataType="date"
         />
         <Paging defaultPageSize={10} />
       </DataGrid>
@@ -254,4 +287,9 @@ const Education = [
   { value: 1, label: 'اهلي' },
   { value: 2, label: 'عالمي' },
   { value: 3, label: 'مصري' },
+];
+
+const PaymentSettings = [
+  { value: 1, educationTypeId: 1, educationType: 'اهلي', brancheId: 1, yearId: 1, year: 2025, paymentTypeId: 2, paymentType: 'دفعتين', percentage: 50, startDate: '2025-01-01', endDate: '2025-01-31' },
+  { value: 2, educationTypeId: 1, educationType: 'اهلي', brancheId: 1, yearId: 1, year: 2025, paymentTypeId: 2, paymentType: 'دفعتين', percentage: 50, startDate: '2025-02-01', endDate: '2025-03-31' },
 ];
