@@ -1,30 +1,89 @@
 import DataGrid, { Column, Paging } from 'devextreme-react/data-grid';
-import InputSpinner from 'react-bootstrap-input-spinner';
+import Input from './../ui/Input';
 
 function RunTimeTable({ data, setData, loading, paymentLength }) {
   const ChartCell = (cellData) => {
     function handleChange(e) {
-      const newData = data.map((item) => {
-        if (item.id === cellData.data.id) {
-          return { ...item, percentage: e };
+      const newPercentage = parseFloat(
+        Number(e.currentTarget.value).toFixed(2),
+      ); // Ensure 2 decimal places
+      const newData = [...data];
+
+      const index = newData.findIndex((item) => item.id === cellData.data.id);
+
+      newData[index] = {
+        ...newData[index],
+        percentage: parseFloat(newPercentage),
+      };
+
+      let totalPercentage = newData.reduce(
+        (sum, item) => sum + parseFloat(item.percentage),
+        0,
+      );
+
+      if (totalPercentage > 100) {
+        const adjustment = (totalPercentage - 100).toFixed(2);
+
+        if (index < newData.length - 1) {
+          newData[index + 1].percentage = (
+            parseFloat(newData[index + 1].percentage) - parseFloat(adjustment)
+          ).toFixed(2);
         } else {
-          return {
-            ...item,
-            percentage: (100 - e) / (paymentLength - 1),
-          };
+          newData[index - 1].percentage = (
+            parseFloat(newData[index - 1].percentage) - parseFloat(adjustment)
+          ).toFixed(2);
         }
-      });
+      }
+
+      totalPercentage = newData.reduce(
+        (sum, item) => sum + parseFloat(item.percentage),
+        0,
+      );
+
+      if (totalPercentage > 100) {
+        newData[0].percentage = (
+          parseFloat(newData[0].percentage) -
+          (totalPercentage - 100)
+        ).toFixed(2);
+      }
+
+      if (totalPercentage < 100) {
+        const diff = (100 - totalPercentage).toFixed(2);
+        newData[newData.length - 1].percentage = parseFloat(
+          (
+            parseFloat(newData[newData.length - 1].percentage) +
+            parseFloat(diff)
+          ).toFixed(2),
+        );
+      }
+
       setData(newData);
     }
+
+    // function handleChange(e) {
+    //   const newData = data.map((item) => {
+    //     if (item.id === cellData.data.id) {
+    //       return { ...item, percentage: Number(e.currentTarget.value) };
+    //     } else {
+    //       return {
+    //         ...item,
+    //         percentage:
+    //           (100 - Number(e.currentTarget.value)) / (paymentLength - 1),
+    //       };
+    //     }
+    //   });
+    //   setData(newData);
+    // }
+
     return (
-      <InputSpinner
-        type="real"
-        precision={3}
+      <Input
+        type="text"
+        style={{ width: '100%' }}
+        defaultValue={cellData.key.percentage}
+        onBlur={handleChange}
         min={1}
         max={100}
         step={0.01}
-        value={cellData.key.percentage}
-        onChange={handleChange}
       />
     );
   };

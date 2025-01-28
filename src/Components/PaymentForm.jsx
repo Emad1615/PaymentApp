@@ -75,7 +75,7 @@ function PaymentForm() {
         educationTypes: educationTypes
           .map((education) => education.label)
           .join(' - '),
-        percentage: 100 / paymentType.number,
+        percentage: (100 / paymentType.number).toFixed(2),
         startDate: idx === 0 ? new Date() : addDays(Arr[idx - 1]?.endDate, 1),
         endDate:
           idx === 0
