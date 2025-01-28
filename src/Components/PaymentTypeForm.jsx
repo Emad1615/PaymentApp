@@ -1,10 +1,14 @@
 import Switch from 'react-switch';
-import InputSpinner from 'react-bootstrap-input-spinner';
 import styled from 'styled-components';
 import { useState } from 'react';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
-import { Input } from '../ui/Input';
+import InputSpinner from './../ui/InputSpinner';
+
+const Input = styled.input`
+  padding: 8px;
+  border: 1px solid #ccc;
+`;
 
 function PaymentTypeForm() {
   const [nameAr, setNameAr] = useState('');
@@ -13,7 +17,6 @@ function PaymentTypeForm() {
   const [isDefault, setIsDefault] = useState(false);
 
   const handleSavePaymentType = (newPaymentType) => {
-    // // Save the new payment type (add it to the list or update your state)
     // setPaymentType((prevTypes) => [...prevTypes, newPaymentType]);
     toast.success('تم إضافة نوع الدفع بنجاح');
   };
@@ -28,12 +31,6 @@ function PaymentTypeForm() {
     // onSave(newPaymentType);
     // closeModal();
   };
-
-  const handlePaymentNumberChange = (e) => {
-    const value = Math.max(1, e.target.value);
-    setPaymentNumber(value);
-  };
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <label>اسم نوع الدفع بالعربية</label>
@@ -51,16 +48,7 @@ function PaymentTypeForm() {
       />
 
       <label>عدد الدفعات</label>
-      <InputSpinner
-        type="real"
-        precision={0}
-        min={1}
-        max={100}
-        step={1}
-        value={paymentNumber}
-        onChange={handlePaymentNumberChange}
-      />
-
+      <InputSpinner value={paymentNumber} setValue={setPaymentNumber} />
       <label>هل هو النوع الافتراضي؟</label>
       <div>
         <Switch
@@ -68,7 +56,7 @@ function PaymentTypeForm() {
           className="react-switch"
           onChange={() => setIsDefault(!isDefault)}
           offColor="#888"
-          onColor="#0d6efd"
+          onColor="#6366f1"
           offHandleColor="#fff"
           onHandleColor="#fff"
           uncheckedIcon={
