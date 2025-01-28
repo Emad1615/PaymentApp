@@ -1,6 +1,12 @@
 import { createGlobalStyle } from "styled-components";
 const GlobalStyle = createGlobalStyle`
 :root {
+.react-switch-bg {
+    border-radius: 0px !important;
+}
+.react-switch-handle {
+    border-radius: 0px !important;
+}
 
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
