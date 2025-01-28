@@ -1,6 +1,23 @@
 import { createGlobalStyle } from "styled-components";
 const GlobalStyle = createGlobalStyle`
 :root {
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide input spinner for Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Hide input spinner for Edge */
+input[type="number"]::-ms-clear {
+  display: none;
+}
+  
   --fc-border-color: var(--color-grey-200);
   &, &.light-mode{
          /* Indigo */
