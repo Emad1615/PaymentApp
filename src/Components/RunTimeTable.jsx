@@ -4,10 +4,10 @@ import { FaPercentage } from 'react-icons/fa';
 import styled from 'styled-components';
 
 const Per = styled.div`
-  background: #eef1fe;
+  background: #6366f1;
   padding: 10.3px 10px;
-  color: #6c6c6c;
-  border: 1px solid #cccccc;
+  color:white;
+  border: 1px solid #6366f1;
 `;
 const ContainerPer = styled.div`
 display: flex;
@@ -96,6 +96,9 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
         id="DivRunTimeTable"
         dataSource={data}
         showBorders={true}
+        rowAlternationEnabled={true}
+        defaultSearchPanel={{ visible: true }}
+        searchPanel={{ visible: true }}
         idField="id"
         rtlEnabled={true}
         disabled={loading}>
@@ -110,18 +113,18 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
           caption="النسبة"
           cellRender={ChartCell}
         />
-        {/* <Column
+        <Column
           dataField="startDate"
           caption="تاريخ البدء"
           minWidth={320}
-          cellRender={ChartCell}
+          // cellRender={ChartCell}
         />
         <Column
           dataField="endDate"
           caption="تاريخ الانتهاء"
           minWidth={320}
-          cellRender={ChartCell}
-        /> */}
+          // cellRender={ChartkCell}
+        />
         <Paging defaultPageSize={10} />
       </DataGrid>
     </>

@@ -1,1 +1,4 @@
 @import "tailwindcss";
+.dx-filter-builder-popup .dx-dropdowneditor-icon {
+    display: inline-block;
+  }
