@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import styled from 'styled-components';
 import Button from '../ui/Button'; // Make sure the Button component exists
 import toast from 'react-hot-toast';
@@ -42,7 +42,7 @@ const ModalBody = styled.div`
   margin-top: 10px;
 `;
 
-function AddPaymentTypeModal() {
+function AddPaymentTypeModal({ paymentType, setPaymentType }) {
   const [showModal, setShowModal] = useState(false);
   return (
     <>
@@ -64,7 +64,7 @@ function AddPaymentTypeModal() {
               </Title>
             </ModalHeader>
             <ModalBody>
-              <PaymentTypeForm />
+              <PaymentTypeForm paymentType={paymentType} setPaymentType={setPaymentType} />
             </ModalBody>
           </ModalContainer>
         </ModalOverlay>

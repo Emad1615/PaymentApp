@@ -24,10 +24,34 @@ export const getPaymentTypes = async () => {
     return error.response.data;
   }
 };
+
+// Fetch Payment Type Data
+export const getPaymentType = async (id) => {
+  try {
+    const response = await axios.get(`${config.API_BASE_URL}/PaymentType/` + id);
+    if (response.data.statusCode === 200) {
+      return response.data.data;
+    } else {
+      if (response.data.errors && response.data.errors.length > 0) {
+        response.data.errors.forEach((error) => { toast.error(error); });
+      }
+      else { toast.error('حدث خطأ.'); }
+      return response.data;
+    }
+  } catch (error) {
+    console.log('Error CheckDefault Payment:', error);
+    if (error.response.data.errors && error.response.data.errors.length > 0) {
+      error.response.data.errors.forEach((error) => { toast.error(error); });
+    }
+    else { toast.error('حدث خطأ.'); }
+    return error.response.data;
+  }
+};
+
 // Check For Default PaymentType
 export const checkDefaultPaymentType = async () => {
   try {
-    const response = await axios.get(`${config.API_BASE_URL}/PaymentType/CheckDefaultPaymentTypeExist`); // Modify this if you have a specific endpoint to check for defaults
+    const response = await axios.get(`${config.API_BASE_URL}/PaymentType/CheckDefaultPaymentTypeExist`);
     if (response.data.statusCode === 200) {
       return response.data.data;
     } else {
@@ -51,6 +75,34 @@ export const checkDefaultPaymentType = async () => {
 export const SavePaymentType = async (newPaymentType) => {
   try {
     const response = await axios.post(`${config.API_BASE_URL}/PaymentType`, newPaymentType);
+    if (response.data.statusCode === 201) {
+      return response.data;
+    } else {
+      if (response.data.errors && response.data.errors.length > 0) {
+        response.data.errors.forEach((error) => { toast.error(error); });
+      }
+      else {
+        toast.error('حدث خطأ.');
+      }
+      return response.data;
+    }
+  } catch (error) {
+    console.log('Error Saveing PaymentTypes:', error);
+    if (error.response.data.errors && error.response.data.errors.length > 0) {
+      error.response.data.errors.forEach((error) => { toast.error(error); });
+    }
+    else {
+      toast.error('حدث خطأ.');
+    }
+    return error.response.data;
+  }
+};
+
+
+// Update Payment Type
+export const UpdatePaymentType = async (id, updatePaymentType) => {
+  try {
+    const response = await axios.put(`${config.API_BASE_URL}/PaymentType/` + id, updatePaymentType);
     if (response.data.statusCode === 201) {
       return response.data;
     } else {

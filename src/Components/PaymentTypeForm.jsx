@@ -1,10 +1,10 @@
 import Switch from 'react-switch';
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
 import InputSpinner from './../ui/InputSpinner';
-import { SavePaymentType, checkDefaultPaymentType } from '../Services/paymentTypeService'; // Import the service functions
+import { SavePaymentType, UpdatePaymentType, checkDefaultPaymentType, getPaymentType } from '../Services/paymentTypeService'; // Import the service functions
 import Swal from 'sweetalert2';
 import { arabicRegex, englishRegex } from '../config';
 import { FaRegSave } from 'react-icons/fa';
@@ -21,7 +21,8 @@ const ErrorText = styled.div`
   margin-top: 4px;
 `;
 
-function PaymentTypeForm() {
+function PaymentTypeForm({ paymentType, setPaymentType }) {
+  const [id, setId] = useState(null);
   const [nameAr, setNameAr] = useState('');
   const [nameEn, setNameEn] = useState('');
   const [paymentNumber, setPaymentNumber] = useState('');
@@ -33,7 +34,31 @@ function PaymentTypeForm() {
     paymentNumber: ''
   });
 
+  useEffect(() => {
+    async function fetchData() {
+
+      if (paymentType) {
+        setLoading(true);
+        const result = await getPaymentType(paymentType.id);
+        console.log(result);
+        if (result.success) {
+          setId(result.data.id);
+          setNameAr(result.data.name);
+          setNameEn(result.data.nameEn);
+          setPaymentNumber(result.data.paymentNo);
+          setIsDefault(result.data.isDefault);
+        } else {
+          clearPaymentTypeForm();
+        }
+        setLoading(false);
+      }
+    }
+    fetchData();
+
+  }, [paymentType]);
+
   function clearPaymentTypeForm() {
+    setId(null);
     setNameAr('');
     setNameEn('');
     setPaymentNumber('');
@@ -129,14 +154,20 @@ function PaymentTypeForm() {
     }
 
     const newPaymentType = {
+      id,
       name: nameAr,
       nameEn,
       paymentNo: paymentNumber,
       isDefault,
     };
     setLoading(true);
-
-    const result = await SavePaymentType(newPaymentType);
+    let result = null;
+    if (id != null) {
+      result = await UpdatePaymentType(id, newPaymentType);
+    }
+    else {
+      result = await SavePaymentType(newPaymentType);
+    }
     console.log(result);
     if (result.success) {
       clearPaymentTypeForm();
