@@ -1,54 +1,33 @@
-import DataGrid, { Column, Editing, Paging } from 'devextreme-react/data-grid';
-import { DateBox, NumberBox } from 'devextreme-react';
-import toast from 'react-hot-toast';
+import DataGrid, { Column, Paging } from 'devextreme-react/data-grid';
+import InputSpinner from 'react-bootstrap-input-spinner';
 
-function RunTimeTable({ data, setData, loading }) {
-  // Function to ensure total percentage equals 100
-  function validateTotalPercentage() {
-    const totalPercentage = data.reduce((sum, row) => sum + row.percentage, 0);
-    if (totalPercentage !== 100) {
-      toast.error('إجمالي النسبة يجب أن يكون 100');
-      return false;
+function RunTimeTable({ data, setData, loading, paymentLength }) {
+  const ChartCell = (cellData) => {
+    function handleChange(e) {
+      const newData = data.map((item) => {
+        if (item.id === cellData.data.id) {
+          return { ...item, percentage: e };
+        } else {
+          return {
+            ...item,
+            percentage: (100 - e) / (paymentLength - 1),
+          };
+        }
+      });
+      setData(newData);
     }
-    return true;
-  }
-  // Function to update percentage and adjust others to maintain total 100
-  function adjustPercentages(updatedIndex, updatedValue) {
-    const total = data.reduce(
-      (sum, row, index) =>
-        index !== updatedIndex ? sum + row.percentage : sum,
-      0,
+    return (
+      <InputSpinner
+        type="real"
+        precision={3}
+        min={1}
+        max={100}
+        step={0.01}
+        value={cellData.key.percentage}
+        onChange={handleChange}
+      />
     );
-    const remaining = 100 - total;
-    const updatedData = [...data];
-    updatedData[updatedIndex].percentage = updatedValue;
-
-    // Adjust other percentages to make the total sum 100
-    let remainingRows = updatedData.filter(
-      (_, index) => index !== updatedIndex,
-    );
-    let totalRemaining = remaining;
-    remainingRows.forEach((row, index) => {
-      const newPercentage = totalRemaining / remainingRows.length;
-      updatedData[index].percentage = newPercentage;
-      totalRemaining -= newPercentage;
-    });
-
-    setData(updatedData);
-  }
-  // Validate endDate is not before startDate
-  function validateEndDate(e) {
-    const { value, rowIndex } = e;
-    const updatedData = [...data];
-    const row = updatedData[rowIndex];
-    const startDate = row.startDate;
-
-    if (value < startDate) {
-      toast.error('تاريخ الانتهاء لا يمكن أن يكون قبل تاريخ البدء.');
-      e.cancel = true; // Prevent updating the cell if the validation fails
-    }
-  }
-
+  };
   return (
     <>
       <DataGrid
@@ -56,9 +35,10 @@ function RunTimeTable({ data, setData, loading }) {
         dataSource={data}
         showBorders={true}
         idField="id"
+        rtlEnabled={true}
         disabled={loading}>
         <Column dataField="id" caption="ID" visible={false} width={50} />
-        <Column dataField="paymentTypeId" caption="نوع الدفع" />
+        <Column dataField="paymentType" caption="نوع الدفع" />
         <Column dataField="year" caption="العام الدراسي" />
         <Column dataField="branchs" caption="الفروع" />
         <Column dataField="educationTypes" caption="نوع التعليم" />
@@ -66,49 +46,20 @@ function RunTimeTable({ data, setData, loading }) {
         <Column
           dataField="percentage"
           caption="النسبة"
-          editCellComponent={NumberBox}
-          editorOptions={{
-            min: 0,
-            max: 100,
-            showSpinButtons: true,
-          }}
-          onValueChanged={(e) => {
-            const { value, rowIndex } = e;
-            if (value > 100) {
-              toast.error('النسبة لا يمكن أن تتجاوز 100');
-              e.cancel = true;
-              return;
-            }
-            adjustPercentages(rowIndex, value);
-            if (!validateTotalPercentage()) {
-              e.cancel = true;
-            }
-          }}
+          cellRender={ChartCell}
         />
-
-        {/* Start Date column */}
-        <Column
+        {/* <Column
           dataField="startDate"
           caption="تاريخ البدء"
-          dataType="date"
-          editCellComponent={DateBox}
+          minWidth={320}
+          cellRender={ChartCell}
         />
-
-        {/* End Date column */}
         <Column
           dataField="endDate"
           caption="تاريخ الانتهاء"
-          dataType="date"
-          editCellComponent={DateBox}
-          onValueChanged={validateEndDate}
-        />
-
-        <Editing
-          allowUpdating={true}
-          allowAdding={false}
-          allowDeleting={false}
-          mode="cell"
-        />
+          minWidth={320}
+          cellRender={ChartCell}
+        /> */}
         <Paging defaultPageSize={10} />
       </DataGrid>
     </>

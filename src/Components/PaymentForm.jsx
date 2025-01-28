@@ -67,7 +67,8 @@ function PaymentForm() {
         id: idx + 1,
         paymentTypeId: paymentType.value,
         paymentType: paymentType.label,
-        year: year.value,
+        yearId: year.value,
+        year: year.label,
         branchIds: branchs.map((branch) => branch.value),
         branchs: branchs.map((branch) => branch.label).join(' - '),
         educationTypeIds: educationTypes.map((education) => education.value),
@@ -174,10 +175,17 @@ function PaymentForm() {
           </Button>
         </ButtonGroup>
       </Container>
+
       {loading && <div style={spinnerStyle}>جاري التحميل...</div>}
+
       {data.length > 0 && (
         <Container>
-          <RunTimeTable data={data} loading={loading} setData={setData} />
+          <RunTimeTable
+            data={data}
+            loading={loading}
+            setData={setData}
+            paymentLength={paymentType.number}
+          />
           <Button type="button" variation="success" onClick={() => {}}>
             <BiSolidSave />
             حفظ

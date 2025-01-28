@@ -4,12 +4,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
-
-const Input = styled.input`
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
+import { Input } from '../ui/Input';
 
 function PaymentTypeForm() {
   const [nameAr, setNameAr] = useState('');
