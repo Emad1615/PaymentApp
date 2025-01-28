@@ -9,13 +9,19 @@ export const getPaymentTypes = async () => {
     if (response.data.status === 201) {
       return response.data.data;
     } else {
-      if (response.data.errors && response.data.errors.length > 0) 
+      if (response.data.errors && response.data.errors.length > 0) {
         response.data.errors.forEach((error) => { toast.error(error); });
-      else toast.error('حدث خطأ.');
+      }
+      else { toast.error('حدث خطأ.'); }
+      return response.data;
     }
   } catch (error) {
-    console.error('Error fetching PaymentTypes:', error);
-    throw error;
+    console.log('Error fetching PaymentTypes:', error);
+    if (error.response.data.errors && error.response.data.errors.length > 0) {
+      error.response.data.errors.forEach((error) => { toast.error(error); });
+    }
+    else { toast.error('حدث خطأ.'); }
+    return error.response.data;
   }
 };
 // Check For Default PaymentType
@@ -25,16 +31,19 @@ export const checkDefaultPaymentType = async () => {
     if (response.data.status === 201) {
       return response.data.data;
     } else {
-      if (response.data.errors && response.data.errors.length > 0) 
+      if (response.data.errors && response.data.errors.length > 0) {
         response.data.errors.forEach((error) => { toast.error(error); });
-      else toast.error('حدث خطأ.');
+      }
+      else { toast.error('حدث خطأ.'); }
+      return response.data;
     }
   } catch (error) {
-    console.log('Error Saveing PaymentTypes:', error);  
-    if (error.response.data.errors && error.response.data.errors.length > 0) 
+    console.log('Error CheckDefault Payment:', error);
+    if (error.response.data.errors && error.response.data.errors.length > 0) {
       error.response.data.errors.forEach((error) => { toast.error(error); });
-    else toast.error('حدث خطأ.');
-    throw error;
+    }
+    else { toast.error('حدث خطأ.'); }
+    return error.response.data;
   }
 };
 
@@ -46,15 +55,18 @@ export const handleSavePaymentType = async (newPaymentType) => {
       toast.success('تم إضافة نوع الدفع بنجاح');
       return response.data.data;
     } else {
-      if (response.data.errors && response.data.errors.length > 0) 
+      if (response.data.errors && response.data.errors.length > 0) {
         response.data.errors.forEach((error) => { toast.error(error); });
-      else toast.error('حدث خطأ.');
+      }
+      else { toast.error('حدث خطأ.'); }
+      return response.data;
     }
   } catch (error) {
-    console.log('Error Saveing PaymentTypes:', error);  
-    if (error.response.data.errors && error.response.data.errors.length > 0) 
+    console.log('Error Saveing PaymentTypes:', error);
+    if (error.response.data.errors && error.response.data.errors.length > 0) {
       error.response.data.errors.forEach((error) => { toast.error(error); });
-    else toast.error('حدث خطأ.');
-    throw error;
+    }
+    else { toast.error('حدث خطأ.'); }
+    return error.response.data;
   }
 };

@@ -5,7 +5,7 @@ import Button from '../ui/Button';
 import toast from 'react-hot-toast';
 import InputSpinner from './../ui/InputSpinner';
 import { handleSavePaymentType, checkDefaultPaymentType } from '../Services/paymentTypeService'; // Import the service functions
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 import { arabicRegex, englishRegex } from '../config';
 
 const Input = styled.input`
@@ -111,10 +111,10 @@ function PaymentTypeForm() {
 
 
   const handleSave = async () => {
-    
+
     if (!validateForm()) return;
     if (isDefault) {
-      const defaultExists = await checkDefaultPaymentType();  
+      const defaultExists = await checkDefaultPaymentType();
       if (defaultExists) {
         const result = await Swal.fire({
           title: 'هل تريد الاستمرار؟',
@@ -126,19 +126,24 @@ function PaymentTypeForm() {
         });
 
         if (!result.isConfirmed) {
-          return; 
+          return;
         }
       }
     }
 
     const newPaymentType = {
-      nameE:nameAr,
+      nameE: nameAr,
       nameEn,
-      paymentNo:paymentNumber,
+      paymentNo: paymentNumber,
       isDefault,
     };
-    const result = await handleSavePaymentType(newPaymentType);  
-    console.log(result);  
+    const result = await handleSavePaymentType(newPaymentType);
+    console.log(result);
+    if (result.success) {
+
+    } else {
+
+    }
   };
 
   return (
@@ -158,13 +163,13 @@ function PaymentTypeForm() {
         style={{ direction: 'ltr', textAlign: 'right' }}
         onChange={handleEnglishInputChange}
       />
-      {errors.nameEn && <ErrorText>{errors.nameEn}</ErrorText>}  
-      
-      <label>عدد الدفعات</label>
-      <InputSpinner  value={paymentNumber} setValue={setPaymentNumber} />
-      {errors.paymentNumber && <ErrorText>{errors.paymentNumber}</ErrorText>}  
+      {errors.nameEn && <ErrorText>{errors.nameEn}</ErrorText>}
 
-      
+      <label>عدد الدفعات</label>
+      <InputSpinner value={paymentNumber} setValue={setPaymentNumber} />
+      {errors.paymentNumber && <ErrorText>{errors.paymentNumber}</ErrorText>}
+
+
       <label>هل هو النوع الافتراضي؟</label>
       <div>
         <Switch
