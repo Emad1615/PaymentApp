@@ -1,9 +1,8 @@
-import React, {  useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../ui/Button'; // Make sure the Button component exists
-import toast from 'react-hot-toast';
 import Title from '../ui/Title';
-import { FaPlus } from 'react-icons/fa';
+import { FaEdit, FaPlus } from 'react-icons/fa';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import PaymentTypeForm from './PaymentTypeForm';
@@ -44,10 +43,15 @@ const ModalBody = styled.div`
 
 function AddPaymentTypeModal({ paymentType, setPaymentType }) {
   const [showModal, setShowModal] = useState(false);
+
+   useEffect(() => {
+
+   },[paymentType])
   return (
     <>
       <Button type="button" onClick={() => setShowModal((prev) => !prev)}>
-        <FaPlus /> إضافة
+        {paymentType != null ? <FaEdit /> : <FaPlus />} 
+        {paymentType != null ? 'تعديل' : 'إضافة'} 
       </Button>
       {showModal && (
         <ModalOverlay>
