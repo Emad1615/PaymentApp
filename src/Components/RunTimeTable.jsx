@@ -1,6 +1,15 @@
 import DataGrid, { Column, Paging } from 'devextreme-react/data-grid';
 import Input from './../ui/Input';
+import { FaPercentage } from 'react-icons/fa';
+import styled from 'styled-components';
 
+const Per = styled.div`
+  background: #eef1fe;
+  padding: 10.3px 10px;
+  color: #6c6c6c;
+  flex: 1;
+  border: 1px solid #cccccc;
+`;
 function RunTimeTable({ data, setData, loading, paymentLength }) {
   const ChartCell = (cellData) => {
     function handleChange(e) {
@@ -76,15 +85,20 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
     // }
 
     return (
-      <Input
-        type="text"
-        style={{ width: '100%' }}
-        defaultValue={cellData.key.percentage}
-        onBlur={handleChange}
-        min={1}
-        max={100}
-        step={0.01}
-      />
+      <div className="flex items-center ">
+        <Input
+          type="text"
+          style={{ width: '100%', borderRadius: '0px' }}
+          defaultValue={cellData.key.percentage}
+          onBlur={handleChange}
+          min={1}
+          max={100}
+          step={0.01}
+        />
+        <Per>
+          <FaPercentage />
+        </Per>
+      </div>
     );
   };
   return (
