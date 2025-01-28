@@ -243,7 +243,7 @@ function PaymentForm() {
         <Column dataField="id" caption="ID" visible={false} width={50} />
         <Column dataField="paymentTypeId" caption="نوع الدفع" />
         <Column dataField="year" caption="العام الدراسي" />
-        <Column dataField="branch" caption="الفروع" />
+        <Column dataField="branch" caption="الفرع" />
         <Column dataField="educationType" caption="نوع التعليم" />
 
         <Column
@@ -290,6 +290,6 @@ const Education = [
 ];
 
 const PaymentSettings = [
-  { value: 1, educationTypeId: 1, educationType: 'اهلي', brancheId: 1, yearId: 1, year: 2025, paymentTypeId: 2, paymentType: 'دفعتين', percentage: 50, startDate: '2025-01-01', endDate: '2025-01-31' },
-  { value: 2, educationTypeId: 1, educationType: 'اهلي', brancheId: 1, yearId: 1, year: 2025, paymentTypeId: 2, paymentType: 'دفعتين', percentage: 50, startDate: '2025-02-01', endDate: '2025-03-31' },
+  { value: 1, educationTypeId: 1, educationType: 'اهلي', branchId: 1, branch: 'فرع 1', yearId: 1, year: 2025, paymentTypeId: 2, paymentType: 'دفعتين', percentage: 50, startDate: '2025-01-01', endDate: '2025-01-31' },
+  { value: 2, educationTypeId: 1, educationType: 'اهلي', branchId: 1, branch: 'فرع 1', yearId: 1, year: 2025, paymentTypeId: 2, paymentType: 'دفعتين', percentage: 50, startDate: '2025-02-01', endDate: '2025-03-31' },
 ];
