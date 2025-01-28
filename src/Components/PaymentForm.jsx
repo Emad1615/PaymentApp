@@ -3,7 +3,7 @@ import AddPaymentType from './AddPaymentType';
 import CustomSelect from '../ui/CustomSelect';
 import ButtonGroup from '../ui/ButtonGroup';
 import Button from '../ui/Button';
-import { FaRegEye, FaSearch } from 'react-icons/fa';
+import { FaRegEye } from 'react-icons/fa';
 import { MdCancel } from 'react-icons/md';
 import { useState } from 'react';
 import { addDays } from 'date-fns';
