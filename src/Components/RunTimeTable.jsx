@@ -2,6 +2,7 @@ import DataGrid, { Column, Paging } from 'devextreme-react/data-grid';
 import Input from './../ui/Input';
 import { FaPercentage } from 'react-icons/fa';
 import styled from 'styled-components';
+import { addDays } from 'date-fns';
 
 const Per = styled.div`
   background: #6366f1;
@@ -90,6 +91,60 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
       </ContainerPer>
     );
   };
+  
+  function StartDateCell(cellData){
+    function handleStartDateChange(e) { 
+      const selectedDate = new Date(e.target.value);
+      const newData = [...data];
+      const index = newData.findIndex((item) => item.id === cellData.data.id);
+      newData[index] = {
+        ...newData[index],
+        startDate: selectedDate.toISOString().split('T')[0],
+        endDate: addDays(selectedDate, 1).toISOString().split('T')[0], 
+      };
+      for (let i = index + 1; i < newData.length; i++) {
+        newData[i] = {
+          ...newData[i],
+          startDate: addDays(new Date(newData[i - 1].endDate), 1).toISOString().split('T')[0], 
+          endDate: addDays(new Date(newData[i - 1].endDate), 2).toISOString().split('T')[0],  
+        };
+      }
+      if (index > 0) {
+        newData[index - 1] = {
+          ...newData[index - 1],
+          endDate: addDays(selectedDate, -1).toISOString().split('T')[0], 
+          startDate: addDays(new Date(newData[index - 1].endDate), -2).toISOString().split('T')[0],  
+        };
+      }
+      setData(newData);  
+    }
+    return(
+      <>
+        <Input
+          type="date"
+          style={{ width: '100%', borderRadius: '0px' }}
+          defaultValue={cellData.key.startDate}
+          onChange={handleStartDateChange}
+          min={new Date().toISOString().split('T')[0]}
+        />
+      </>)
+
+  }
+ 
+
+  function EndDateCell(cellData){
+    return(
+      <>
+        <Input
+          type="date"
+          style={{ width: '100%', borderRadius: '0px' }}
+          defaultValue={cellData.key.endDate}
+          onChange={(e) => console.log(e.target.value)}
+          min={new Date().toISOString().split('T')[0]}
+        />
+      </>)
+
+  }
   return (
     <>
       <DataGrid
@@ -117,13 +172,13 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
           dataField="startDate"
           caption="تاريخ البدء"
           minWidth={320}
-          // cellRender={ChartCell}
+          cellRender={StartDateCell}
         />
         <Column
           dataField="endDate"
           caption="تاريخ الانتهاء"
           minWidth={320}
-          // cellRender={ChartkCell}
+          cellRender={EndDateCell}
         />
         <Paging defaultPageSize={10} />
       </DataGrid>
@@ -132,3 +187,13 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
 }
 
 export default RunTimeTable;
+
+
+
+ // newData[index + 1].startDate = addDays(new Date(newData[index].endDate), 1).toISOString().split('T')[0];
+        // newData[index+1].endDate=addDays(new Date(newData[index+1].startDate),1).toISOString().split('T')[0];
+        // newData = newData.map((item, idx) => {
+        //   if (item.id> cellData.data.id)
+        //     return {...item,startDate:addDays(new Date(newData[idx-1].endDate),1).toISOString().split('T')[0],endDate:addDays(new Date(newData[idx-1].endDate),2).toISOString().split('T')[0]}
+        //   return item;
+        // })

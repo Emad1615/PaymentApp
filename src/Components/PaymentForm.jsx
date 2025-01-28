@@ -76,11 +76,11 @@ function PaymentForm() {
           .map((education) => education.label)
           .join(' - '),
         percentage: (100 / paymentType.number).toFixed(2),
-        startDate: idx === 0 ? new Date() : addDays(Arr[idx - 1]?.endDate, 1),
+        startDate: idx === 0 ? new Date().toISOString().split('T')[0] : addDays(Arr[idx - 1]?.endDate, 1).toISOString().split('T')[0],
         endDate:
           idx === 0
-            ? addDays(new Date(), 10)
-            : addDays(Arr[idx - 1]?.endDate, 11),
+            ? addDays(new Date(), 1).toISOString().split('T')[0]
+            : addDays(Arr[idx - 1]?.endDate, 2).toISOString().split('T')[0],
       }),
     );
     setData(Arr);
@@ -107,7 +107,7 @@ function PaymentForm() {
     setRealData([]);
     setShowRealTable(false);
   }
-
+  console.log(data);
   return (
     <>
       <Container>
@@ -119,7 +119,7 @@ function PaymentForm() {
             setValue={setPaymentType}
             placeholder="اختر نوع الدفع"
           />
-          <AddPaymentTypeModal />
+          <AddPaymentTypeModal paymentType={paymentType} setPaymentType={setPaymentType} />
         </Row>
         <Row>
           <CustomSelect
