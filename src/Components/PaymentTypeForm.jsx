@@ -21,6 +21,20 @@ const ErrorText = styled.div`
   margin-top: 4px;
 `;
 
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+`;
+
+
 function PaymentTypeForm({ paymentType, setPaymentType }) {
   const [id, setId] = useState(null);
   const [nameAr, setNameAr] = useState('');
@@ -39,7 +53,7 @@ function PaymentTypeForm({ paymentType, setPaymentType }) {
 
       if (paymentType) {
         setLoading(true);
-        const result = await getPaymentType(paymentType.id);
+        const result = await getPaymentType(paymentType.value);
         console.log(result);
         if (result.success) {
           setId(result.data.id);
@@ -136,7 +150,7 @@ function PaymentTypeForm({ paymentType, setPaymentType }) {
 
     if (!validateForm()) return;
     if (isDefault) {
-      const defaultExists = await checkDefaultPaymentType();
+      const defaultExists = await checkDefaultPaymentType(id ?? 0);
       if (defaultExists) {
         const result = await Swal.fire({
           title: 'هل تريد الاستمرار؟',
@@ -170,15 +184,20 @@ function PaymentTypeForm({ paymentType, setPaymentType }) {
     }
     console.log(result);
     if (result.success) {
+      toast.success((id != null)?'تم التعديل بنجاح':'تم إضافة نوع الدفع بنجاح');
       clearPaymentTypeForm();
-      toast.success('تم إضافة نوع الدفع بنجاح');
     }
     setLoading(false);
 
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+       {loading && (
+        <Overlay>
+          <ClipLoader size={50} color={'#6366f1'} />
+        </Overlay>
+      )}
       <label>اسم نوع الدفع بالعربية</label>
       <Input
         type="text"

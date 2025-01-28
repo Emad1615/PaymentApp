@@ -23,7 +23,7 @@ function InputSpinner({ value, setValue }) {
   const handlePaymentNumberChange = (e) => {
     if (e.target.value < 100) setValue((prev) => Math.max(e.target.value, 1));
     else setValue((prev) => Math.min(e.target.value, 100));
-    console.log('IC value:', value);
+    console.log('Changed value:', value);
   };
 
   const incrementPaymentNumber = () => {
@@ -36,8 +36,7 @@ function InputSpinner({ value, setValue }) {
   const handleBlur = () => {
     if (value < 100) setValue((prev) => Math.max(value, 1));
     else setValue((prev) => Math.min(value, 100));
-    // When the input field loses focus, you can handle final processing or validation
-    console.log('Input blurred, final value:', value);
+    console.log('final value:', value);
   };
 
   return (

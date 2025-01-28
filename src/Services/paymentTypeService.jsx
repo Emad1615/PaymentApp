@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 export const getPaymentTypes = async () => {
   try {
     const response = await axios.get(`${config.API_BASE_URL}/PaymentType/GetAll`);
-    if (response.data.statusCode === 200) {
+    if (response.data.success) {
       return response.data.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
@@ -29,8 +29,8 @@ export const getPaymentTypes = async () => {
 export const getPaymentType = async (id) => {
   try {
     const response = await axios.get(`${config.API_BASE_URL}/PaymentType/` + id);
-    if (response.data.statusCode === 200) {
-      return response.data.data;
+    if (response.data.success) {
+      return response.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
         response.data.errors.forEach((error) => { toast.error(error); });
@@ -49,10 +49,10 @@ export const getPaymentType = async (id) => {
 };
 
 // Check For Default PaymentType
-export const checkDefaultPaymentType = async () => {
+export const checkDefaultPaymentType = async (exceptId) => {
   try {
-    const response = await axios.get(`${config.API_BASE_URL}/PaymentType/CheckDefaultPaymentTypeExist`);
-    if (response.data.statusCode === 200) {
+    const response = await axios.get(`${config.API_BASE_URL}/PaymentType/CheckDefaultPaymentTypeExist/` + exceptId);
+    if (response.data.success) {
       return response.data.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
@@ -75,7 +75,7 @@ export const checkDefaultPaymentType = async () => {
 export const SavePaymentType = async (newPaymentType) => {
   try {
     const response = await axios.post(`${config.API_BASE_URL}/PaymentType`, newPaymentType);
-    if (response.data.statusCode === 201) {
+    if (response.data.success) {
       return response.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
@@ -103,7 +103,7 @@ export const SavePaymentType = async (newPaymentType) => {
 export const UpdatePaymentType = async (id, updatePaymentType) => {
   try {
     const response = await axios.put(`${config.API_BASE_URL}/PaymentType/` + id, updatePaymentType);
-    if (response.data.statusCode === 201) {
+    if (response.data.success) {
       return response.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
