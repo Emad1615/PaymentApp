@@ -1,40 +1,36 @@
 import React, { useState } from 'react';
 
-const InputSpinner = ({ step, min, max, value, handleBlur, handlePaymentNumberChange }) =>
+const InputSpinner = () =>
 {
     const [paymentNumber, setPaymentNumber] = useState(1);
 
-    const handlePaymentNumberChange = (e) =>
+    const handleIncrement = () =>
     {
-        let value = e.target.value;
-        if (value === '')
-        {
-            setPaymentNumber('');
-            return;
-        }
-
-        // Limit precision to 2 decimal places
-        const numericValue = parseFloat(value).toFixed(2);
-        setPaymentNumber(numericValue);
+        setPaymentNumber((prevValue) => Math.min(prevValue + 1, 100)); // Limit to max 100
     };
 
-    const handleBlur = () =>
+    const handleDecrement = () =>
     {
-        // When the input field loses focus, you can handle final processing or validation
-        console.log('Input blurred, final value:', paymentNumber);
+        setPaymentNumber((prevValue) => Math.max(prevValue - 1, 1)); // Limit to min 1
+    };
+
+    const handleChange = (e) =>
+    {
+        setPaymentNumber(Number(e.target.value));
     };
 
     return (
         <div>
+            <button onClick={handleDecrement}>-</button>
             <input
                 type="number"
-                value={value}
-                onChange={handlePaymentNumberChange}
-                onBlur={handleBlur}
-                step={step}
-                min={min}
-                max={max}
+                value={paymentNumber}
+                onChange={handleChange}
+                min={1}
+                max={100}
+                step="0.01"
             />
+            <button onClick={handleIncrement}>+</button>
         </div>
     );
 };
