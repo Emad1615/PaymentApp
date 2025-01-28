@@ -1,21 +1,18 @@
 import styled from 'styled-components';
-import AddPaymentType from './AddPaymentType';
 import CustomSelect from '../ui/CustomSelect';
 import ButtonGroup from '../ui/ButtonGroup';
 import Button from '../ui/Button';
-import { FaPlus, FaRegEye, FaSearch } from 'react-icons/fa';
+import AddPaymentTypeModal from './AddPaymentTypeModal';
+import { FaRegEye, FaSearch } from 'react-icons/fa';
 import { MdCancel } from 'react-icons/md';
 import { useState } from 'react';
 import { addDays } from 'date-fns';
 import toast from 'react-hot-toast';
-import DataGrid, { Column, Editing, Paging } from 'devextreme-react/data-grid';
-import { DateBox, NumberBox } from 'devextreme-react';
 import { ClipLoader } from 'react-spinners';
+import RunTimeTable from './RunTimeTable';
+import { BiSolidSave } from 'react-icons/bi';
 
-import 'devextreme/dist/css/dx.light.css';
-import AddPaymentTypeModal from './AddPaymentTypeModal';
-
-const Form = styled.div`
+const Container = styled.div`
   margin: 2rem 0;
   box-shadow: var(--shadow-md);
   padding: 18px 36px;
@@ -42,7 +39,6 @@ function PaymentForm() {
   const [realData, setRealData] = useState([]);
   const [showRealTable, setShowRealTable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
 
   const spinnerStyle = {
     position: 'absolute',
@@ -55,19 +51,6 @@ function PaymentForm() {
     borderRadius: '5px',
   };
 
-  const handleAddPaymentType = () => {
-    setShowModal(true); // Show modal on button click
-  };
-
-  const handleSavePaymentType = (newPaymentType) => {
-    // Save the new payment type (add it to the list or update your state)
-    setPaymentType((prevTypes) => [...prevTypes, newPaymentType]);
-    toast.success('تم إضافة نوع الدفع بنجاح');
-  };
-  const closeModal = () => {
-    setShowModal(false); // Close modal
-  };
-
   function handleAddPayment() {
     if (!paymentType || !year || !branchs.length || !educationTypes.length) {
       toast.error(`يجب اختيار نوع الدفع والعام الدراسي والفروع ونوع التعليم`);
@@ -77,9 +60,7 @@ function PaymentForm() {
       toast.error(`تم اضافة الدفعات بالفعل`);
       return;
     }
-
     setLoading(true);
-
     let Arr = [];
     Array.from({ length: paymentType.number }, (_, i) => i).map((_, idx) =>
       Arr.push({
@@ -125,213 +106,94 @@ function PaymentForm() {
     setRealData([]);
     setShowRealTable(false);
   }
-  // Function to ensure total percentage equals 100
-  function validateTotalPercentage() {
-    const totalPercentage = data.reduce((sum, row) => sum + row.percentage, 0);
-    if (totalPercentage !== 100) {
-      toast.error('إجمالي النسبة يجب أن يكون 100');
-      return false;
-    }
-    return true;
-  }
 
-  // Function to update percentage and adjust others to maintain total 100
-  function adjustPercentages(updatedIndex, updatedValue) {
-    const total = data.reduce(
-      (sum, row, index) =>
-        index !== updatedIndex ? sum + row.percentage : sum,
-      0,
-    );
-    const remaining = 100 - total;
-    const updatedData = [...data];
-    updatedData[updatedIndex].percentage = updatedValue;
-
-    // Adjust other percentages to make the total sum 100
-    let remainingRows = updatedData.filter(
-      (_, index) => index !== updatedIndex,
-    );
-    let totalRemaining = remaining;
-    remainingRows.forEach((row, index) => {
-      const newPercentage = totalRemaining / remainingRows.length;
-      updatedData[index].percentage = newPercentage;
-      totalRemaining -= newPercentage;
-    });
-
-    setData(updatedData);
-  }
-
-  // Validate endDate is not before startDate
-  function validateEndDate(e) {
-    const { value, rowIndex } = e;
-    const updatedData = [...data];
-    const row = updatedData[rowIndex];
-    const startDate = row.startDate;
-
-    if (value < startDate) {
-      toast.error('تاريخ الانتهاء لا يمكن أن يكون قبل تاريخ البدء.');
-      e.cancel = true; // Prevent updating the cell if the validation fails
-    }
-  }
-
-  console.log(data);
   return (
-    <Form>
-      <Row>
-        <CustomSelect
-          key="Types"
-          options={paymentTypes}
-          value={paymentType}
-          setValue={setPaymentType}
-          placeholder="اختر نوع الدفع"
-        />
-        {/* <AddPaymentType /> */}
-
-        <Button type="button" onClick={handleAddPaymentType}>
-          <FaPlus /> إضافة
-        </Button>
-        <AddPaymentTypeModal
-          isOpen={showModal}
-          closeModal={closeModal}
-          onSave={handleSavePaymentType}
-        />
-      </Row>
-      <Row>
-        <CustomSelect
-          key="Years"
-          options={Years}
-          value={year}
-          setValue={setYear}
-          placeholder="اختر العام الدراسي "
-        />
-        <CustomSelect
-          key="Branches"
-          options={Branches}
-          value={branchs}
-          setValue={setBranchs}
-          isMulti={true}
-          placeholder="اختر  الفروع"
-        />
-        <CustomSelect
-          key="Education"
-          options={Education}
-          value={educationTypes}
-          setValue={setEducationTypes}
-          isMulti={true}
-          placeholder="اختر نوع التعليم"
-        />
-      </Row>
-      <ButtonGroup justifycontent="end">
-        <Button
-          type="button"
-          variation="purpleSharp"
-          onClick={handleAddPayment}
-          disabled={
-            loading ||
-            !paymentType ||
-            !year ||
-            !branchs.length ||
-            !educationTypes.length
-          }>
-          {loading ? <ClipLoader size={20} color={'#fff'} /> : <FaRegEye />}{' '}
-          استعراض
-        </Button>
-        <Button
-          type="button"
-          variation="primary"
-          onClick={handleRealPayment}
-          disabled={loading}>
-          {loading ? <ClipLoader size={20} color={'#fff'} /> : <FaSearch />}{' '}
-          بحــث
-        </Button>
-        <Button type="button" variation="danger" onClick={() => clearData()}>
-          <MdCancel />
-          الغاء
-        </Button>
-      </ButtonGroup>
-
+    <>
+      <Container>
+        <Row>
+          <CustomSelect
+            key="Types"
+            options={paymentTypes}
+            value={paymentType}
+            setValue={setPaymentType}
+            placeholder="اختر نوع الدفع"
+          />
+          <AddPaymentTypeModal />
+        </Row>
+        <Row>
+          <CustomSelect
+            key="Years"
+            options={Years}
+            value={year}
+            setValue={setYear}
+            placeholder="اختر العام الدراسي "
+          />
+          <CustomSelect
+            key="Branches"
+            options={Branches}
+            value={branchs}
+            setValue={setBranchs}
+            isMulti={true}
+            placeholder="اختر  الفروع"
+          />
+          <CustomSelect
+            key="Education"
+            options={Education}
+            value={educationTypes}
+            setValue={setEducationTypes}
+            isMulti={true}
+            placeholder="اختر نوع التعليم"
+          />
+        </Row>
+        <ButtonGroup justifycontent="end">
+          <Button
+            type="button"
+            variation="purpleSharp"
+            onClick={handleAddPayment}
+            disabled={
+              loading ||
+              !paymentType ||
+              !year ||
+              !branchs?.length ||
+              !educationTypes?.length
+            }>
+            {loading ? <ClipLoader size={20} color={'#fff'} /> : <FaRegEye />}{' '}
+            استعراض
+          </Button>
+          <Button
+            type="button"
+            variation="primary"
+            onClick={handleRealPayment}
+            disabled={loading}>
+            {loading ? <ClipLoader size={20} color={'#fff'} /> : <FaSearch />}{' '}
+            بحــث
+          </Button>
+          <Button type="button" variation="danger" onClick={() => clearData()}>
+            <MdCancel />
+            الغاء
+          </Button>
+        </ButtonGroup>
+      </Container>
       {loading && <div style={spinnerStyle}>جاري التحميل...</div>}
-      {loading && <ClipLoader size={20} color={'#fff'} />}
-
-      <DataGrid
-        id="DivRunTimeTable"
-        dataSource={data}
-        showBorders={true}
-        idField="id"
-        style={{ display: showRealTable ? 'none' : 'block' }}
-        disabled={loading}>
-        <Column dataField="id" caption="ID" visible={false} width={50} />
-        <Column dataField="paymentTypeId" caption="نوع الدفع" />
-        <Column dataField="year" caption="العام الدراسي" />
-        <Column dataField="branchs" caption="الفروع" />
-        <Column dataField="educationTypes" caption="نوع التعليم" />
-
-        <Column
-          dataField="percentage"
-          caption="النسبة"
-          editCellComponent={NumberBox}
-          editorOptions={{
-            min: 0,
-            max: 100,
-            showSpinButtons: true,
-          }}
-          onValueChanged={(e) => {
-            const { value, rowIndex } = e;
-            if (value > 100) {
-              toast.error('النسبة لا يمكن أن تتجاوز 100');
-              e.cancel = true;
-              return;
-            }
-            adjustPercentages(rowIndex, value);
-            if (!validateTotalPercentage()) {
-              e.cancel = true;
-            }
-          }}
-        />
-
-        {/* Start Date column */}
-        <Column
-          dataField="startDate"
-          caption="تاريخ البدء"
-          dataType="date"
-          editCellComponent={DateBox}
-        />
-
-        {/* End Date column */}
-        <Column
-          dataField="endDate"
-          caption="تاريخ الانتهاء"
-          dataType="date"
-          editCellComponent={DateBox}
-          onValueChanged={validateEndDate}
-        />
-
-        <Editing
-          allowUpdating={true}
-          allowAdding={false}
-          allowDeleting={false}
-          mode="cell"
-        />
-        <Paging defaultPageSize={10} />
-      </DataGrid>
-      <DataGrid
-        id="gridRealTable"
-        dataSource={realData}
-        showBorders={true}
-        idField="id"
-        style={{ display: showRealTable ? 'block' : 'none' }}
-        disabled={loading}>
-        <Column dataField="id" caption="ID" visible={false} width={50} />
-        <Column dataField="paymentTypeId" caption="نوع الدفع" />
-        <Column dataField="year" caption="العام الدراسي" />
-        <Column dataField="branch" caption="الفرع" />
-        <Column dataField="educationType" caption="نوع التعليم" />
-
-        <Column dataField="percentage" caption="النسبة" />
-        <Column dataField="startDate" caption="تاريخ البدء" dataType="date" />
-        <Column dataField="endDate" caption="تاريخ الانتهاء" dataType="date" />
-        <Paging defaultPageSize={10} />
-      </DataGrid>
-    </Form>
+      {data.length > 0 && (
+        <Container>
+          <RunTimeTable data={data} loading={loading} setData={setData} />
+          <Button type="button" variation="success" onClick={() => {}}>
+            <BiSolidSave />
+            حفظ
+          </Button>
+        </Container>
+      )}
+      {showRealTable && (
+        <Container>
+          <RunTimeTable
+            data={realData}
+            loading={loading}
+            setData={setRealData}
+          />
+        </Container>
+      )}
+    </>
   );
 }
 
