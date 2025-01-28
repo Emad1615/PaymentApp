@@ -47,7 +47,7 @@ function InputSpinner({ value, setValue }) {
       </SpinnerButton>
       <Input
         type="number"
-        style={{ width: '100%' }}
+        style={{ width: '100%', direction: 'ltr', textAlign: 'right' }}
         value={value}
         onChange={handlePaymentNumberChange}
         onBlur={handleBlur}

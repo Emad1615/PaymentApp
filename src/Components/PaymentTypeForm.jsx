@@ -118,7 +118,7 @@ function PaymentTypeForm() {
       if (defaultExists) {
         const result = await Swal.fire({
           title: 'هل تريد الاستمرار؟',
-          text: "تم العثور على نوع دفع افتراضي موجود بالفعل. هل ترغب في استبداله؟",
+          html: "تم العثور على نوع دفع افتراضي موجود بالفعل.<br/> هل ترغب في استبداله؟",
           icon: 'warning',
           showCancelButton: true,
           confirmButtonText: 'نعم, استبدال',
@@ -132,19 +132,13 @@ function PaymentTypeForm() {
     }
 
     const newPaymentType = {
-      nameAr,
+      nameE:nameAr,
       nameEn,
-      paymentNumber,
+      paymentNo:paymentNumber,
       isDefault,
     };
-    try {
-      const result = await handleSavePaymentType(newPaymentType);  
-      toast.success('تم إضافة نوع الدفع بنجاح');
-      console.log(result);  
-    } catch (error) {
-      toast.error('حدث خطأ أثناء إضافة نوع الدفع');
-      console.error('Error saving payment type:', error);
-    }
+    const result = await handleSavePaymentType(newPaymentType);  
+    console.log(result);  
   };
 
   return (
@@ -161,12 +155,13 @@ function PaymentTypeForm() {
       <Input
         type="text"
         value={nameEn}
+        style={{ direction: 'ltr', textAlign: 'right' }}
         onChange={handleEnglishInputChange}
       />
       {errors.nameEn && <ErrorText>{errors.nameEn}</ErrorText>}  
       
       <label>عدد الدفعات</label>
-      <InputSpinner value={paymentNumber} setValue={setPaymentNumber} />
+      <InputSpinner  value={paymentNumber} setValue={setPaymentNumber} />
       {errors.paymentNumber && <ErrorText>{errors.paymentNumber}</ErrorText>}  
 
       
