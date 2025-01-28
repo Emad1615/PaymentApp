@@ -4,9 +4,11 @@ import { useState } from 'react';
 import Button from '../ui/Button';
 import toast from 'react-hot-toast';
 import InputSpinner from './../ui/InputSpinner';
-import { handleSavePaymentType, checkDefaultPaymentType } from '../Services/paymentTypeService'; // Import the service functions
+import { SavePaymentType, checkDefaultPaymentType } from '../Services/paymentTypeService'; // Import the service functions
 import Swal from 'sweetalert2';
 import { arabicRegex, englishRegex } from '../config';
+import { FaRegSave } from 'react-icons/fa';
+import { ClipLoader } from 'react-spinners';
 
 const Input = styled.input`
   padding: 8px;
@@ -24,6 +26,7 @@ function PaymentTypeForm() {
   const [nameEn, setNameEn] = useState('');
   const [paymentNumber, setPaymentNumber] = useState('');
   const [isDefault, setIsDefault] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     nameAr: '',
     nameEn: '',
@@ -131,12 +134,16 @@ function PaymentTypeForm() {
       paymentNo: paymentNumber,
       isDefault,
     };
-    const result = await handleSavePaymentType(newPaymentType);
+    setLoading(true);
+
+    const result = await SavePaymentType(newPaymentType);
     console.log(result);
     if (result.success) {
       clearPaymentTypeForm();
       toast.success('تم إضافة نوع الدفع بنجاح');
-    } 
+    }
+    setLoading(false);
+
   };
 
   return (
@@ -162,46 +169,56 @@ function PaymentTypeForm() {
       <InputSpinner value={paymentNumber} setValue={setPaymentNumber} />
       {errors.paymentNumber && <ErrorText>{errors.paymentNumber}</ErrorText>}
 
-
-      <label>هل هو النوع الافتراضي؟</label>
-      <div>
-        <Switch
-          checked={isDefault}
-          className="react-switch"
-          onChange={() => setIsDefault(!isDefault)}
-          offColor="#888"
-          onColor="#6366f1"
-          offHandleColor="#fff"
-          onHandleColor="#fff"
-          uncheckedIcon={
-            <span
-              style={{
-                color: '#fff',
-                marginLeft: '10px',
-                position: 'absolute',
-                top: '3px',
-              }}>
-              {' '}
-              لا{' '}
-            </span>
-          } // Custom text for OFF state
-          checkedIcon={
-            <span
-              style={{
-                color: '#fff',
-                marginLeft: '11px',
-                position: 'absolute',
-                top: '1px',
-              }}>
-              {' '}
-              نعم{' '}
-            </span>
-          } // Custom text for ON state
-          height={30} // Larger height
-          width={70} // Larger width
-        />
+      <div style={{ margin: '10px  0px' }}>
+        <label style={{
+          display: 'inline-flex'
+        }}>
+          هل هو النوع الافتراضي؟
+          <div style={{ margin: '0px 20px' }}>
+            <Switch
+              checked={isDefault}
+              className="react-switch"
+              onChange={() => setIsDefault(!isDefault)}
+              offColor="#888"
+              onColor="#6366f1"
+              offHandleColor="#fff"
+              onHandleColor="#fff"
+              uncheckedIcon={
+                <span
+                  style={{
+                    color: '#fff',
+                    marginLeft: '10px',
+                    position: 'absolute',
+                    top: '3px',
+                  }}>
+                  {' '}
+                  لا{' '}
+                </span>
+              } // Custom text for OFF state
+              checkedIcon={
+                <span
+                  style={{
+                    color: '#fff',
+                    marginLeft: '11px',
+                    position: 'absolute',
+                    top: '1px',
+                  }}>
+                  {' '}
+                  نعم{' '}
+                </span>
+              } // Custom text for ON state
+              height={30} // Larger height
+              width={70} // Larger width
+            />
+          </div>
+        </label>
       </div>
-      <Button onClick={handleSave}>حفظ</Button>
+      <Button
+        onClick={handleSave}
+        disabled={loading}
+      >
+        {loading ? <ClipLoader size={20} color={'#fff'} /> : <FaRegSave />}
+        حفظ</Button>
     </div>
   );
 }
