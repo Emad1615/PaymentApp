@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 export const getPaymentTypes = async () => {
   try {
     const response = await axios.get(`${config.API_BASE_URL}/PaymentType/GetAll`);
-    if (response.data.status === 201) {
+    if (response.data.statusCode === 201) {
       return response.data.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
@@ -28,7 +28,7 @@ export const getPaymentTypes = async () => {
 export const checkDefaultPaymentType = async () => {
   try {
     const response = await axios.get(`${config.API_BASE_URL}/PaymentType/CheckDefaultPaymentTypeExist`); // Modify this if you have a specific endpoint to check for defaults
-    if (response.data.status === 201) {
+    if (response.data.statusCode === 201) {
       return response.data.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
@@ -51,14 +51,16 @@ export const checkDefaultPaymentType = async () => {
 export const handleSavePaymentType = async (newPaymentType) => {
   try {
     const response = await axios.post(`${config.API_BASE_URL}/PaymentType`, newPaymentType);
-    if (response.data.status === 201) {
+    if (response.data.statusCode === 201) {
       toast.success('تم إضافة نوع الدفع بنجاح');
       return response.data.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
         response.data.errors.forEach((error) => { toast.error(error); });
       }
-      else { toast.error('حدث خطأ.'); }
+      else { 
+        toast.error('حدث خطأ.'); 
+      }
       return response.data;
     }
   } catch (error) {
@@ -66,7 +68,9 @@ export const handleSavePaymentType = async (newPaymentType) => {
     if (error.response.data.errors && error.response.data.errors.length > 0) {
       error.response.data.errors.forEach((error) => { toast.error(error); });
     }
-    else { toast.error('حدث خطأ.'); }
+    else { 
+      toast.error('حدث خطأ.'); 
+    }
     return error.response.data;
   }
 };

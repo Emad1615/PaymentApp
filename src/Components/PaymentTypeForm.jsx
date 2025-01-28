@@ -30,6 +30,18 @@ function PaymentTypeForm() {
     paymentNumber: ''
   });
 
+  function clearPaymentTypeForm() {
+    setNameAr('');
+    setNameEn('');
+    setPaymentNumber('');
+    setIsDefault(false);
+    setErrors({
+      nameAr: '',
+      nameEn: '',
+      paymentNumber: ''
+    });
+
+  }
   const validateForm = () => {
     let valid = true;
     let errors = {
@@ -56,29 +68,11 @@ function PaymentTypeForm() {
     setErrors(errors);
     return valid;
   };
-  // const validateForm = () => {
-  //   if (!nameAr.trim()) {
-  //     toast.error('اسم نوع الدفع بالعربية مطلوب');
-  //     return false;
-  //   }
-  //   if (!nameEn.trim()) {
-  //     toast.error('اسم نوع الدفع بالإنجليزية مطلوب');
-  //     return false;
-  //   }
-  //   if (paymentNumber <= 0 || isNaN(paymentNumber)) {
-  //     toast.error('عدد الدفعات يجب أن يكون أكبر من 0');
-  //     return false;
-  //   }
-  //   return true;
-  // };
 
-
-  // Handle Arabic input change and validate
   const handleArabicInputChange = (e) => {
     const newNameAr = e.target.value;
     setNameAr(newNameAr);
 
-    // Check if the input contains only Arabic characters (and spaces)
     if (!arabicRegex.test(newNameAr)) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -132,7 +126,7 @@ function PaymentTypeForm() {
     }
 
     const newPaymentType = {
-      nameE: nameAr,
+      name: nameAr,
       nameEn,
       paymentNo: paymentNumber,
       isDefault,
@@ -140,10 +134,9 @@ function PaymentTypeForm() {
     const result = await handleSavePaymentType(newPaymentType);
     console.log(result);
     if (result.success) {
-
-    } else {
-
-    }
+      clearPaymentTypeForm();
+      toast.success('تم إضافة نوع الدفع بنجاح');
+    } 
   };
 
   return (
