@@ -7,8 +7,10 @@ const Per = styled.div`
   background: #eef1fe;
   padding: 10.3px 10px;
   color: #6c6c6c;
-  flex: 1;
   border: 1px solid #cccccc;
+`;
+const ContainerPer = styled.div`
+display: flex;
 `;
 function RunTimeTable({ data, setData, loading, paymentLength }) {
   const ChartCell = (cellData) => {
@@ -69,23 +71,10 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
       setData(newData);
     }
 
-    // function handleChange(e) {
-    //   const newData = data.map((item) => {
-    //     if (item.id === cellData.data.id) {
-    //       return { ...item, percentage: Number(e.currentTarget.value) };
-    //     } else {
-    //       return {
-    //         ...item,
-    //         percentage:
-    //           (100 - Number(e.currentTarget.value)) / (paymentLength - 1),
-    //       };
-    //     }
-    //   });
-    //   setData(newData);
-    // }
+   
 
     return (
-      <div className="flex items-center ">
+      <ContainerPer>
         <Input
           type="text"
           style={{ width: '100%', borderRadius: '0px' }}
@@ -98,7 +87,7 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
         <Per>
           <FaPercentage />
         </Per>
-      </div>
+      </ContainerPer>
     );
   };
   return (
