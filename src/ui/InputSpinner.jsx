@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 const SpinnerWrapper = styled.div`
   display: flex;
@@ -7,7 +7,7 @@ const SpinnerWrapper = styled.div`
 const Input = styled.input`
   padding: 8px;
   border: 1px solid #ccc;
-`;
+  `;
 const SpinnerButton = styled.button`
   background-color: var(--color-brand-500);
   border: 1px solid #ccc;

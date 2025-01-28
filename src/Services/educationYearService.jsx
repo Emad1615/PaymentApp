@@ -1,5 +1,5 @@
 import axios from 'axios';
-import config from '../config';  // Import the config file
+import {config} from '../config';  // Import the config file
 
 // Fetch Education Years
 export const getEducationYears = async () =>
