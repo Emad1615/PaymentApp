@@ -124,4 +124,4 @@ export const UpdatePaymentType = async (id, updatePaymentType) => {
     }
     return error.response.data;
   }
-};
+};  

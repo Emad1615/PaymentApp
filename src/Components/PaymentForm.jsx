@@ -5,7 +5,7 @@ import Button from '../ui/Button';
 import AddPaymentTypeModal from './AddPaymentTypeModal';
 import { FaRegEye, FaSearch } from 'react-icons/fa';
 import { MdCancel } from 'react-icons/md';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { addDays } from 'date-fns';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
@@ -13,6 +13,7 @@ import RunTimeTable from './RunTimeTable';
 import { BiSolidSave } from 'react-icons/bi';
 import { CheckBranchsOrEducationTypeHasPaymentType, createPaymentSettingByList } from '../Services/paymentService';
 import Swal from 'sweetalert2';
+import { getPaymentTypes } from '../Services/paymentTypeService';
 
 const Container = styled.div`
   margin: 2rem 0;
@@ -32,6 +33,16 @@ const Row = styled.div`
     align-items: start;
   }
 `;
+const spinnerStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  padding: '20px',
+  color: '#fff',
+  borderRadius: '5px',
+};
 function PaymentForm()
 {
   const [paymentType, setPaymentType] = useState(null);
@@ -42,17 +53,10 @@ function PaymentForm()
   const [realData, setRealData] = useState([]);
   const [showRealTable, setShowRealTable] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const spinnerStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: '20px',
-    color: '#fff',
-    borderRadius: '5px',
-  };
+  const [paymentList, setPaymentList] = useState([]); 
+  const [yearList, setYearsList] = useState([]);
+  const [branchList, setBrancheList] = useState([]); 
+  const [educationTypeList, setEducationTypeList] = useState([]);
 
   function handleAddPayment()
   {
@@ -197,14 +201,44 @@ function PaymentForm()
     setRealData([]);
     setShowRealTable(false);
   }
-  console.log(data);
+  useEffect(()=>{
+
+    const getPaymentList = async () => {
+      const response = await getPaymentTypes();
+      if (response.success) {
+        setPaymentList(response.data.map(item => ({ value: item.id, label: item.name })));
+      }
+    }
+    const getYearsList = async () => {
+      const response = await getYearsList();
+      if (response.success) {
+        setYearsList(response.data.map(item => ({ value: item.id, label: item.year })));
+      }
+    }
+    const getBranchList = async () => {
+      const response = await getBranchList();
+      if (response.success) {
+        setBrancheList(response.data.map(item => ({ value: item.id, label: item.name })));
+      }
+    }
+    const getEducationTypeList = async () => {
+      const response = await getEducationTypeList();
+      if (response.success) {
+        setEducationTypeList(response.data.map(item => ({ value: item.id, label: item.name })));
+      }
+    }
+    getPaymentList();
+    getYearsList();
+    getBranchList();
+    getEducationTypeList();
+  },[])
   return (
     <>
       <Container>
         <Row>
           <CustomSelect
             key="Types"
-            options={paymentTypes}
+            options={paymentList}
             value={paymentType}
             setValue={setPaymentType}
             placeholder="اختر نوع الدفع"
@@ -214,14 +248,14 @@ function PaymentForm()
         <Row>
           <CustomSelect
             key="Years"
-            options={Years}
+            options={yearList}
             value={year}
             setValue={setYear}
             placeholder="اختر العام الدراسي "
           />
           <CustomSelect
             key="Branches"
-            options={Branches}
+            options={branchList}
             value={branchs}
             setValue={setBranchs}
             isMulti={true}
@@ -229,7 +263,7 @@ function PaymentForm()
           />
           <CustomSelect
             key="Education"
-            options={Education}
+            options={educationTypeList}
             value={educationTypes}
             setValue={setEducationTypes}
             isMulti={true}
