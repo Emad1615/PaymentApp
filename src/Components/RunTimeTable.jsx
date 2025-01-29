@@ -116,6 +116,14 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
           startDate: addDays(new Date(newData[index - 1].endDate), -2).toISOString().split('T')[0],  
         };
       }
+
+       // newData[index + 1].startDate = addDays(new Date(newData[index].endDate), 1).toISOString().split('T')[0];
+        // newData[index+1].endDate=addDays(new Date(newData[index+1].startDate),1).toISOString().split('T')[0];
+        // newData = newData.map((item, idx) => {
+        //   if (item.id> cellData.data.id)
+        //     return {...item,startDate:addDays(new Date(newData[idx-1].endDate),1).toISOString().split('T')[0],endDate:addDays(new Date(newData[idx-1].endDate),2).toISOString().split('T')[0]}
+        //   return item;
+        // })
       setData(newData);  
     }
     return(
@@ -189,11 +197,3 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
 export default RunTimeTable;
 
 
-
- // newData[index + 1].startDate = addDays(new Date(newData[index].endDate), 1).toISOString().split('T')[0];
-        // newData[index+1].endDate=addDays(new Date(newData[index+1].startDate),1).toISOString().split('T')[0];
-        // newData = newData.map((item, idx) => {
-        //   if (item.id> cellData.data.id)
-        //     return {...item,startDate:addDays(new Date(newData[idx-1].endDate),1).toISOString().split('T')[0],endDate:addDays(new Date(newData[idx-1].endDate),2).toISOString().split('T')[0]}
-        //   return item;
-        // })
