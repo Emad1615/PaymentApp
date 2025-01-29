@@ -30,7 +30,8 @@ const Row = styled.div`
     align-items: start;
   }
 `;
-function PaymentForm() {
+function PaymentForm()
+{
   const [paymentType, setPaymentType] = useState(null);
   const [year, setYear] = useState(null);
   const [branchs, setBranchs] = useState([]);
@@ -51,12 +52,15 @@ function PaymentForm() {
     borderRadius: '5px',
   };
 
-  function handleAddPayment() {
-    if (!paymentType || !year || !branchs.length || !educationTypes.length) {
+  function handleAddPayment()
+  {
+    if (!paymentType || !year || !branchs.length || !educationTypes.length)
+    {
       toast.error(`يجب اختيار نوع الدفع والعام الدراسي والفروع ونوع التعليم`);
       return;
     }
-    if (data.length === paymentType.number) {
+    if (data.length === paymentType.number)
+    {
       toast.error(`تم اضافة الدفعات بالفعل`);
       return;
     }
@@ -89,16 +93,36 @@ function PaymentForm() {
     setLoading(false);
   }
 
-  function handleRealPayment() {
+  function handleRealPayment()
+  {
     setLoading(true);
-    setTimeout(() => {
+    setTimeout(() =>
+    {
       setRealData(PaymentSettings);
       setData([]);
       setShowRealTable(true);
       setLoading(false);
     }, 2000);
   }
-  function clearData() {
+  async function handlePaymentSave()
+  {
+    setLoading(true);
+    const object = data.map(item =>
+    {
+      return {
+        PaymentTypeId: item.paymentTypeId,
+        YearId: item.yearId,
+        BranchIds: item.branchIds,
+        EducationTypeIds: item.educationTypeIds,
+        Percentage: item.percentage,
+        startDate: item.startDate,
+        endDate: item.endDate
+      }
+    })
+    setLoading(false);
+  }
+  function clearData()
+  {
     setPaymentType(null);
     setYear(null);
     setBranchs(null);
@@ -119,7 +143,7 @@ function PaymentForm() {
             setValue={setPaymentType}
             placeholder="اختر نوع الدفع"
           />
-          <AddPaymentTypeModal paymentType={paymentType} setPaymentType={setPaymentType} />
+          <AddPaymentTypeModal paymentType={paymentType} setPaymentType={setPaymentType} />
         </Row>
         <Row>
           <CustomSelect
@@ -185,7 +209,7 @@ function PaymentForm() {
             loading={loading}
             setData={setData}
           />
-          <Button type="button" variation="success" onClick={() => {}}>
+          <Button disabled={loading} type="button" variation="success" onClick={() => handlePaymentSave()}>
             <BiSolidSave />
             حفظ
           </Button>
