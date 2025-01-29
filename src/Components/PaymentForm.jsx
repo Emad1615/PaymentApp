@@ -11,6 +11,9 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import RunTimeTable from './RunTimeTable';
 import { BiSolidSave } from 'react-icons/bi';
+import { CheckBranchsOrEducationTypeHasPaymentType } from '../Services/paymentService';
+import Swal from 'sweetalert2';
+import { groupBy } from '../Services/GroupBy';
 
 const Container = styled.div`
   margin: 2rem 0;
@@ -104,8 +107,46 @@ function PaymentForm()
       setLoading(false);
     }, 2000);
   }
+
   async function handlePaymentSave()
   {
+    const checkPaymentData = {
+      paymentTypeId: paymentType.value,
+      yearId: year.value,
+      branchs: branchs.map(item => item.value),
+      educationTypes: educationTypes.map(item => item.value)
+    };
+    //Check if One Of the Branchs or EducationType has this Payment Type before
+    const response = await CheckBranchsOrEducationTypeHasPaymentType(checkPaymentData);
+    if (response.success)
+    {
+      if (response.data.length > 0)
+      {
+        const groupedData = groupBy(response.data, ['paymentTypeId', 'branchId', 'educationTypeId', 'educationYearId']);
+        const foundPayments = groupedData.map(item => 
+        {
+          return `نوع الدفعات : ${item.paymentTypeName}  | السنه : ${item.educationYear} | الفرع : ${item.branchName}  | نوع التعليم : ${item.educationTypeName}`
+        });
+        const result = await Swal.fire({
+          title: 'هل تريد الاستمرار؟',
+          html: ` تم العثور على نوع دفع موجود بالفعل. <br/> هل ترغب في استبداله؟ <br/> ${foundPayments.join('<br/>')} `,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'نعم, استبدال',
+          cancelButtonText: 'إلغاء',
+        });
+        if (!result.isConfirmed)
+        {
+          return;
+        }
+      }
+
+    } else
+    {
+      return;
+    }
+
+
     setLoading(true);
     const object = data.map(item =>
     {
@@ -121,6 +162,7 @@ function PaymentForm()
     })
     setLoading(false);
   }
+
   function clearData()
   {
     setPaymentType(null);
@@ -207,11 +249,11 @@ function PaymentForm()
           <RunTimeTable
             data={data}
             loading={loading}
-            setData={setData}لهف 
+            setData={setData}
           />
           <Button disabled={loading} type="button" variation="success" onClick={() => handlePaymentSave()}>
             <BiSolidSave />
-            حفظ
+            حفـــظ
           </Button>
         </Container>
       )}
