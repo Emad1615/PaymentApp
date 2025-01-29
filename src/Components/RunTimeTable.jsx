@@ -14,7 +14,7 @@ const Per = styled.div`
 const ContainerPer = styled.div`
 display: flex;
 `;
-function RunTimeTable({ data, setData, loading, paymentLength }) {
+function RunTimeTable({ data, setData, loading }) {
   useEffect(() => {
     setData(adjustPercentages(data));
   }, data)
@@ -46,63 +46,6 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
         handleChange(e);
       }
     }
-
-    // function handleChange(e) {
-    //   const newPercentage = parseFloat(
-    //     Number(e.currentTarget.value).toFixed(2),
-    //   ); // Ensure 2 decimal places
-    //   const newData = [...data];
-
-    //   const index = newData.findIndex((item) => item.id === cellData.data.id);
-
-    //   newData[index] = {
-    //     ...newData[index],
-    //     percentage: parseFloat(newPercentage),
-    //   };
-
-    //   let totalPercentage = newData.reduce(
-    //     (sum, item) => sum + parseFloat(item.percentage),
-    //     0,
-    //   );
-
-    //   if (totalPercentage > 100) {
-    //     const adjustment = (totalPercentage - 100).toFixed(2);
-
-    //     if (index < newData.length - 1) {
-    //       newData[index + 1].percentage = (
-    //         parseFloat(newData[index + 1].percentage) - parseFloat(adjustment)
-    //       ).toFixed(2);
-    //     } else {
-    //       newData[index - 1].percentage = (
-    //         parseFloat(newData[index - 1].percentage) - parseFloat(adjustment)
-    //       ).toFixed(2);
-    //     }
-    //   }
-
-    //   totalPercentage = newData.reduce(
-    //     (sum, item) => sum + parseFloat(item.percentage),
-    //     0,
-    //   );
-
-    //   if (totalPercentage > 100) {
-    //     newData[0].percentage = (
-    //       parseFloat(newData[0].percentage) -
-    //       (totalPercentage - 100)
-    //     ).toFixed(2);
-    //   }
-
-    //   if (totalPercentage < 100) {
-    //     const diff = (100 - totalPercentage).toFixed(2);
-    //     newData[newData.length - 1].percentage = parseFloat(
-    //       (
-    //         parseFloat(newData[newData.length - 1].percentage) +
-    //         parseFloat(diff)
-    //       ).toFixed(2),
-    //     );
-    //   }
-
-    //   setData(newData);
-    // }
 
     function handleChange(e) {
       let newPercentage = parseFloat(Number(e.currentTarget.value).toFixed(2)); // Ensure 2 decimal places
@@ -208,7 +151,6 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
 
     setData(newData);
   }
-
   // Handle end date change
   function handleEndDateChange(e, cellData) {
     const selectedDate = new Date(e.target.value);
@@ -239,7 +181,6 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
 
     setData(newData);
   }
-
   function StartDateCell(cellData) {
     const index = data.findIndex((item) => item.id === cellData.data.id);
     const minDate = index === 0 ? null : addDays(new Date(data[index - 1].endDate), 1).toISOString().split('T')[0];
@@ -255,7 +196,6 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
       </>)
 
   }
-
   function EndDateCell(cellData) {
     const index = data.findIndex((item) => item.id === cellData.data.id);
     const minDate = addDays(new Date(data[index].startDate), 1).toISOString().split('T')[0];
@@ -282,7 +222,6 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
       headerRow.append('<div class="custom-header-row"><div class="dx-header-cell">All Percentages 100</div></div>');
     }
   };
-
   return (
     <>
       <DataGrid
@@ -324,7 +263,6 @@ function RunTimeTable({ data, setData, loading, paymentLength }) {
           cellRender={StartDateCell} allowSorting={false}
         />
         <Column
-          // headerCellRender={() => <div style={{background:'red'}}>تاريخ الانتهاء</div>}
           dataField="endDate"
           caption="تاريخ الانتهاء"
           minWidth={220}
