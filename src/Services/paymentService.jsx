@@ -39,11 +39,11 @@ export const CheckBranchsOrEducationTypeHasPaymentType = async ({ paymentTypeId,
 };
 
 // Save Payment Type
-export const SavePaymentType = async (newPaymentType) =>
+export const createPaymentSettingByList = async (newPaymentType) =>
 {
   try
   {
-    const response = await axios.post(`${config.API_BASE_URL}/Payment`, newPaymentType);
+    const response = await axios.post(`${config.API_BASE_URL}/Payment/CreatePaymentByList`, newPaymentType);
     if (response.data.success)
     {
       return response.data;

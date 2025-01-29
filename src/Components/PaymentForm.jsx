@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import RunTimeTable from './RunTimeTable';
 import { BiSolidSave } from 'react-icons/bi';
-import { CheckBranchsOrEducationTypeHasPaymentType } from '../Services/paymentService';
+import { CheckBranchsOrEducationTypeHasPaymentType, createPaymentSettingByList } from '../Services/paymentService';
 import Swal from 'sweetalert2';
 
 const Container = styled.div`
@@ -163,19 +163,28 @@ function PaymentForm()
 
 
     setLoading(true);
-    const object = data.map(item =>
+    const createPaymentSettingData = data.map(item =>
     {
       return {
-        PaymentTypeId: item.paymentTypeId,
-        YearId: item.yearId,
-        BranchIds: item.branchIds,
-        EducationTypeIds: item.educationTypeIds,
-        Percentage: item.percentage,
-        startDate: item.startDate,
-        endDate: item.endDate
+        paymentNumber: item.id,
+        paymentTypeId: item.paymentTypeId,
+        educationYearId: item.yearId,
+        branches: item.branchIds,
+        educationTypes: item.educationTypeIds,
+        paymentPercentage: item.percentage,
+        paymentStartDate: item.startDate,
+        paymentEndDate: item.endDate,
       }
     })
+    let result = await createPaymentSettingByList(createPaymentSettingData);
+    console.log(result);
+    if (result.success)
+    {
+      toast.success('تم إضافة أنظمة الدفع بنجاح');
+      clearData();
+    }
     setLoading(false);
+
   }
 
   function clearData()
@@ -293,9 +302,9 @@ const paymentTypes = [
   { value: 3, label: '3 دفعات', number: 3 },
 ];
 const Years = [
-  { value: 1, label: 2025 },
-  { value: 2, label: 2026 },
-  { value: 3, label: 2027 },
+  { value: 1, label: 2024 },
+  { value: 2, label: 2025 },
+  { value: 3, label: 2026 },
 ];
 const Branches = [
   { value: 1, label: 'فرع 1' },
