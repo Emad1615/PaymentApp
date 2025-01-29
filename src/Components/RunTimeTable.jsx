@@ -4,6 +4,8 @@ import { FaPercentage } from 'react-icons/fa';
 import styled from 'styled-components';
 import { addDays } from 'date-fns';
 import { useEffect } from 'react';
+import { DateBox } from 'devextreme-react/date-box';
+import 'devextreme/dist/css/dx.common.css';
 
 const ContainerPercentageIcon = styled.div`
   // background: #6366f1;
@@ -19,10 +21,7 @@ display: flex;
 `;
 function RunTimeTable({ data, setData, loading })
 {
-  useEffect(() =>
-  {
-    setData(adjustPercentages(data));
-  }, data)
+
   function adjustPercentages(newData)
   {
     let totalPercentage = newData.reduce(
@@ -48,6 +47,12 @@ function RunTimeTable({ data, setData, loading })
 
     return newData;
   }
+
+  useEffect(() =>
+  {
+    setData(adjustPercentages(data));
+  }, [data, setData]);
+
 
   const percentageCell = (cellData) =>
   {
@@ -141,7 +146,7 @@ function RunTimeTable({ data, setData, loading })
   // Handle start date change
   function handleStartDateChange(e, cellData)
   {
-    const selectedDate = new Date(e.target.value);
+    const selectedDate = new Date(e.value);
     const newData = [...data];
     const index = newData.findIndex((item) => item.id === cellData.data.id);
 
@@ -176,7 +181,7 @@ function RunTimeTable({ data, setData, loading })
   // Handle end date change
   function handleEndDateChange(e, cellData)
   {
-    const selectedDate = new Date(e.target.value);
+    const selectedDate = new Date(e.value);
     const newData = [...data];
     const index = newData.findIndex((item) => item.id === cellData.data.id);
 
@@ -212,12 +217,20 @@ function RunTimeTable({ data, setData, loading })
     const minDate = index === 0 ? null : addDays(new Date(data[index - 1].endDate), 1).toISOString().split('T')[0];
     return (
       <>
-        <Input
+        {/* <Input
           type="date"
           style={{ width: '100%', borderRadius: '0px' }}
           defaultValue={cellData.key.startDate}
           onChange={(e) => handleStartDateChange(e, cellData)}
           min={minDate}
+        /> */}
+        <DateBox
+          type="date"
+          style={{ width: '100%', borderRadius: '0px' }}
+          defaultValue={cellData.key.startDate}
+          onValueChanged={(e) => handleStartDateChange(e, cellData)}
+          min={minDate}
+          displayFormat="yyyy-MM-dd"
         />
       </>)
 
@@ -229,7 +242,7 @@ function RunTimeTable({ data, setData, loading })
 
     return (
       <>
-        <Input
+        {/* <Input
           type="date"
           style={{ width: '100%', borderRadius: '0px' }}
           defaultValue={cellData.key.endDate}
@@ -237,6 +250,14 @@ function RunTimeTable({ data, setData, loading })
           min={minDate}
         // onChange={(e) => console.log(e.target.value)}
         // min={new Date().toISOString().split('T')[0]}
+        /> */}
+        <DateBox
+          type="date"
+          style={{ width: '100%', borderRadius: '0px' }}
+          defaultValue={cellData.key.endDate}
+          onValueChanged={(e) => handleEndDateChange(e, cellData)}
+          min={minDate}
+          displayFormat="yyyy-MM-dd"
         />
       </>)
 

@@ -21,6 +21,10 @@ const GlobalStyle = createGlobalStyle`
   font-weight: bold;
 }
   
+.dx-widget input, .dx-widget textarea {
+    font-family: "Rubik", serif !important; 
+    line-height: 1.35715;
+}
 
 .dx-datagrid-headers .dx-header-cell {
   padding: 7px;
@@ -187,7 +191,7 @@ html {
   font-family: "Rubik", serif !important  ;
 }
 *{
-  font-family: "Rubik", serif !important  ;
+  font-family: "Rubik", serif   ;
 }
 body {
   font-family: "Poppins", sans-serif;

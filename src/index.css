@@ -1,4 +1,9 @@
 @import "tailwindcss";
+
 .dx-filter-builder-popup .dx-dropdowneditor-icon {
-    display: inline-block;
-  }
+  display: inline-block;
+}
+
+.dx-widget {
+  font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
+}
