@@ -13,7 +13,6 @@ import RunTimeTable from './RunTimeTable';
 import { BiSolidSave } from 'react-icons/bi';
 import { CheckBranchsOrEducationTypeHasPaymentType } from '../Services/paymentService';
 import Swal from 'sweetalert2';
-import { groupBy } from '../Services/GroupBy';
 
 const Container = styled.div`
   margin: 2rem 0;
@@ -122,14 +121,31 @@ function PaymentForm()
     {
       if (response.data.length > 0)
       {
-        const groupedData = groupBy(response.data, ['paymentTypeId', 'branchId', 'educationTypeId', 'educationYearId']);
-        const foundPayments = groupedData.map(item => 
-        {
-          return `نوع الدفعات : ${item.paymentTypeName}  | السنه : ${item.educationYear} | الفرع : ${item.branchName}  | نوع التعليم : ${item.educationTypeName}`
-        });
+        const foundPaymentsTable = `
+          <table class="swal-table">
+            <thead>
+              <tr>
+                <th>نـوع الدفعــات</th>
+                <th>الســنه</th>
+                <th>الفــرع</th>
+                <th>نـوع التعليــم</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${response.data.map(item => `
+                <tr>
+                  <td>${item.paymentTypeName}</td>
+                  <td>${item.educationYear}</td>
+                  <td>${item.branchName}</td>
+                  <td>${item.educationTypeName}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
         const result = await Swal.fire({
           title: 'هل تريد الاستمرار؟',
-          html: ` تم العثور على نوع دفع موجود بالفعل. <br/> هل ترغب في استبداله؟ <br/> ${foundPayments.join('<br/>')} `,
+          html: ` تم العثور على نوع دفع موجود بالفعل. <br/> هل ترغب في استبداله؟ <br/> ${foundPaymentsTable} `,
           icon: 'warning',
           showCancelButton: true,
           confirmButtonText: 'نعم, استبدال',
@@ -140,7 +156,6 @@ function PaymentForm()
           return;
         }
       }
-
     } else
     {
       return;

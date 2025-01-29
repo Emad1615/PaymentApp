@@ -7,6 +7,7 @@ const GlobalStyle = createGlobalStyle`
 .react-switch-handle {
     border-radius: 0px !important;
 }
+   
 
 .dx-datagrid-headers {
   background-color: #ececec !important; /* Make sure the background color fills the header */
@@ -29,6 +30,24 @@ const GlobalStyle = createGlobalStyle`
 .dx-datagrid-headers .dx-header-cell {
   padding: 7px;
   text-align: center; font-weight: bold;
+}
+ ///swal
+.swal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  border: 1px solid #d5d5d5;
+}
+
+.swal-table th, .swal-table td {
+  border: 1px solid #d5d5d5;
+  padding: 8px;
+  text-align: center;
+}
+
+.swal-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
