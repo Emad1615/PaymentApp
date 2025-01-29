@@ -61,11 +61,11 @@ function PaymentForm()
       toast.error(`يجب اختيار نوع الدفع والعام الدراسي والفروع ونوع التعليم`);
       return;
     }
-    if (data.length === paymentType.number)
-    {
-      toast.error(`تم اضافة الدفعات بالفعل`);
-      return;
-    }
+    // if (data.length === paymentType.number)
+    // {
+    //   toast.error(`تم اضافة الدفعات بالفعل`);
+    //   return;
+    // }
     setLoading(true);
     let Arr = [];
     Array.from({ length: paymentType.number }, (_, i) => i).map((_, idx) =>
