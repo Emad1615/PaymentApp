@@ -207,8 +207,7 @@ function PaymentForm()
           <RunTimeTable
             data={data}
             loading={loading}
-            setData={setData}
-            paymentLength={paymentType.number}
+            setData={setData}لهف 
           />
           <Button disabled={loading} type="button" variation="success" onClick={() => handlePaymentSave()}>
             <BiSolidSave />
