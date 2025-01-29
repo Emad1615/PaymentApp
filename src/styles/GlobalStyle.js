@@ -8,6 +8,25 @@ const GlobalStyle = createGlobalStyle`
     border-radius: 0px !important;
 }
 
+.dx-datagrid-headers {
+  background-color: #ececec !important; /* Make sure the background color fills the header */
+}
+
+.dx-datagrid-headers .dx-header-row{
+  background-color: #ececec !important;
+}
+  
+.dx-datagrid-headers .dx-header-row{
+  text-align: center;
+  font-weight: bold;
+}
+  
+
+.dx-datagrid-headers .dx-header-cell {
+  padding: 7px;
+  text-align: center; font-weight: bold;
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
