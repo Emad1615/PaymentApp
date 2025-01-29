@@ -14,7 +14,7 @@ const Per = styled.div`
 const ContainerPer = styled.div`
 display: flex;
 `;
-function RunTimeTable({ data, setData, loading }) {
+function RunTimeTable({ data, setData, loading,paymentLength }) {
   useEffect(() => {
     setData(adjustPercentages(data));
   }, data)

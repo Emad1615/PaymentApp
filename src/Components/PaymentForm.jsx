@@ -184,6 +184,7 @@ function PaymentForm() {
             data={data}
             loading={loading}
             setData={setData}
+            paymentLength={paymentType.number}
           />
           <Button type="button" variation="success" onClick={() => {}}>
             <BiSolidSave />
