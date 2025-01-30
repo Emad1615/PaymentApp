@@ -127,7 +127,7 @@ function PaymentForm() {
       }),
     );
     setData(Arr);
-  setGridPaymentData([]);
+    setGridPaymentData([]);
     setShowRealTable(false);
     setLoading(false);
   }

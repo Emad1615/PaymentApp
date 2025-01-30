@@ -8,7 +8,7 @@ import EditPaymentModal from './EditPaymentModal';
 function RealTable({ loading, gridPaymentData, setGridPaymentData }) {
 
   useEffect(() => {
-    console.log('Real data:', gridPaymentData);
+    
   }, [gridPaymentData]);
 
   const renderCellActions = (cellData) => {
