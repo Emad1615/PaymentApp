@@ -5,8 +5,12 @@ import toast from 'react-hot-toast';
 //Check if One Of the Branchs or EducationType Have This Payment Type before
 export const CheckBranchsOrEducationTypeHasPaymentType = async ({ paymentTypeId, yearId, branchs, educationTypes }) => {
   try {
-
-    const response = await axios.get(`${config.API_BASE_URL}/Payment/GetBranchsOrEducationTypeHasPaymentTypeGrouped`, { params: { paymentTypeId, yearId, branchs: branchs.join('&branchs='), educationTypes: educationTypes.join('&educationTypes=') } });
+    const queryParams = new URLSearchParams();
+    queryParams.append("paymentTypeId", paymentTypeId);
+    queryParams.append("yearId", yearId);
+    branchs.forEach(branch => queryParams.append("branchs", branch));
+    educationTypes.forEach(eduType => queryParams.append("educationTypes", eduType));
+    const response = await axios.get(`${config.API_BASE_URL}/Payment/GetBranchsOrEducationTypeHasPaymentTypeGrouped?${queryParams.toString()}`);
     if (response.data.success) {
       return response.data;
     } else {
@@ -53,20 +57,20 @@ export const getPaymentToEdit = async ({ branchId, educationTypeId, paymentTypeI
 
 export const getAllPaymentByFilters = async ({ paymentTypeId, educationYearId, branchIds, educationTypeIds }) => {
   try {
-    // const params = {
-    //   paymentTypeId,
-    //   educationYearId,
-    //   ...(branchIds.length > 0 &&  { branchIds: branchIds.join('&branchIds=') }), 
-    //   ...(educationTypeIds.length > 0 && { educationTypeIds: educationTypeIds.join('&educationTypeIds=') }) 
-    // };
-    // const response = await axios.get(`${config.API_BASE_URL}/Payment/GetPaymentByFilter`, { params: params });
+    // const queryParams = new URLSearchParams();
+    // (paymentTypeId && queryParams.append("paymentTypeId", paymentTypeId));
+    // (educationYearId && queryParams.append("educationYearId", educationYearId));
+    // (branchIds.length > 0 && branchIds.forEach(branch => queryParams.append("branchIds", branch)));
+    // (educationTypeIds.length > 0 && educationTypeIds.forEach(eduType => queryParams.append("educationTypeIds", eduType)));
+    // const response = await axios.get(`${config.API_BASE_URL}/Payment/GetPaymentByFilter?${queryParams.toString()}`);
+    const params = {
+      paymentTypeId,
+      educationYearId,
+      ...(branchIds.length > 0 &&  { branchIds: branchIds.join('&branchIds=') }), 
+      ...(educationTypeIds.length > 0 && { educationTypeIds: educationTypeIds.join('&educationTypeIds=') }) 
+    };
+    const response = await axios.get(`${config.API_BASE_URL}/Payment/GetPaymentByFilter`, { params: params });
 
-    const queryParams = new URLSearchParams();
-    (paymentTypeId && queryParams.append("paymentTypeId", paymentTypeId));
-    (educationYearId && queryParams.append("educationYearId", educationYearId));
-    (branchIds.length > 0 && branchIds.forEach(branch => queryParams.append("branchIds", branch)));
-    (educationTypeIds.length > 0 && educationTypeIds.forEach(eduType => queryParams.append("educationTypeIds", eduType)));
-    const response = await axios.get(`${config.API_BASE_URL}/Payment/GetPaymentByFilter?${queryParams.toString()}`);
     if (response.data.success) {
       return response.data;
     } else {
