@@ -31,9 +31,9 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
     if (totalPercentage < 100)
     {
       const deficit = (100 - totalPercentage).toFixed(2);
-      newData[newData.length - 1].paymentPercentage = (
+      newData[newData.length - 1].paymentPercentage = parseFloat((
         parseFloat(newData[newData.length - 1].paymentPercentage) + parseFloat(deficit)
-      ).toFixed(2);
+      ).toFixed(2));
     }
 
     newData.forEach((item) =>
@@ -96,7 +96,7 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
             const currentValue = parseFloat(newData[i].paymentPercentage);
             const maxReduce = currentValue - 1; // Ensure no percentage goes below 1
             const reduction = Math.min(excess, maxReduce);
-            newData[i].paymentPercentage = (currentValue - reduction).toFixed(2);
+            newData[i].paymentPercentage = parseFloat((currentValue - reduction).toFixed(2));
             excess -= reduction;
           }
         }
@@ -107,9 +107,9 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
       {
         let deficit = 100 - totalPercentage;
         // Distribute the deficit percentage by adding to the last row
-        newData[newData.length - 1].paymentPercentage = (
+        newData[newData.length - 1].paymentPercentage = parseFloat((
           parseFloat(newData[newData.length - 1].paymentPercentage) + deficit
-        ).toFixed(2);
+        ).toFixed(2));
       }
 
       // Ensure no percentage is less than 1
@@ -121,7 +121,7 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
         }
       });
 
-    setEditingData(adjustPercentages(editingData));
+    setEditingData(adjustPercentages(newData));
     }
 
     return (
@@ -151,12 +151,31 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
     const index = newData.findIndex((item) => item.id === cellData.data.id);
 
     // Update the startDate and endDate of the current row
+    const newEndDateOfCurrentRow = addDays(selectedDate, 1).toISOString().split('T')[0];
+    
     newData[index] = {
       ...newData[index],
       paymentStartDate: selectedDate.toISOString().split('T')[0],
-      paymentEndDate: addDays(selectedDate, 1).toISOString().split('T')[0], // endDate 1 day after startDate
     };
 
+    if (newData[index].paymentEndDate <= newEndDateOfCurrentRow) {
+      newData[index] = {
+        ...newData[index],
+        paymentEndDate: newEndDateOfCurrentRow,
+      };
+    }
+    // Update End Date the rows before if exists
+    if (index > 0) {
+      const previousRow = newData[index - 1];
+      const newEndDateForPreviousRow = new Date(selectedDate);
+      newEndDateForPreviousRow.setDate(newEndDateForPreviousRow.getDate() - 1); 
+
+      // Update the previous row's end date
+      newData[index - 1] = {
+        ...previousRow,
+        paymentEndDate: newEndDateForPreviousRow.toISOString().split('T')[0],
+      };
+    }
     // Update the rows after the modified row
     for (let i = index + 1; i < newData.length; i++)
     {

@@ -5,7 +5,7 @@ import { ClipLoader } from 'react-spinners';
 import { BiSolidSave } from 'react-icons/bi';
 import { Container } from 'react-bootstrap';
 import EditRunTimeTable from './EditRunTimeTable';
-import { getPaymentToEdit } from '../Services/paymentService';
+import { getAllPaymentByFilters } from '../Services/paymentService';
 
 const Overlay = styled.div`
   position: absolute;
@@ -25,28 +25,30 @@ function EditPaymentForm({ rowData, gridPaymentData, setGridPaymentData }) {
   const [editingData, setEditingData] = useState([]);
 
 
-  async function fetchEditedPaymentList() {
-    setLoading(true);
-
-    const filterPaymentObj = {
-      branchId: rowData.branchId,
-      educationTypeId: rowData.educationTypeId,
-      paymentTypeId: rowData.paymentTypeId,
-      educationYearId: rowData.educationYearId
-    }
-    const response = await getPaymentToEdit(filterPaymentObj);
-    if (response.success) {
-      setEditingData(response.data);
-    }
-    setLoading(false);
-  }
-
   useEffect(() => {
-    if (rowData) fetchEditedPaymentList();
-  }, [rowData, fetchEditedPaymentList]);
+    if (rowData) {
+      const fetchEditedPaymentList = async () => {
+        setLoading(true);
+
+        const filterPaymentObj = {
+          paymentTypeId: rowData.paymentTypeId,
+          educationYearId: rowData.educationYearId,
+          branchIds : [rowData.branchId] ,
+          educationTypeIds :[rowData.educationTypeId]
+        }
+        const response = await getAllPaymentByFilters(filterPaymentObj);
+        if (response.success) {
+          setEditingData(response.data);
+        }
+        setLoading(false);
+      }
+      fetchEditedPaymentList();
+    }
+  }, [rowData]);
 
 
   const handleEditPaymentSave = async () => {
+    setLoading(true);
 
     setLoading(false);
   };
