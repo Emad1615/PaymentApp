@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../ui/Button'; // Make sure the Button component exists
 import Title from '../ui/Title';
 import { FaEdit } from 'react-icons/fa';
@@ -17,9 +17,12 @@ export const ModalContainer = styled.div`
 function EditPaymentModal({ rowData, gridPaymentData, setGridPaymentData }) {
     const [showModal, setShowModal] = useState(false);
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    // }, [gridPaymentData, rowData])
+    console.log('logMod:');
+    console.log(gridPaymentData);
+    
+}, [gridPaymentData,setGridPaymentData])
     return (
         <>
             <Button style={{ width: '100%' }} type="button" onClick={() => setShowModal((prev) => !prev)}>
@@ -40,7 +43,7 @@ function EditPaymentModal({ rowData, gridPaymentData, setGridPaymentData }) {
                             </Title>
                         </ModalHeader>
                         <ModalBody>
-                            <EditPaymentForm rowData={rowData} gridPaymentData={gridPaymentData} setGridPaymentData={setGridPaymentData} />
+                            <EditPaymentForm setShowModal={setShowModal} rowData={rowData} gridPaymentData={gridPaymentData} setGridPaymentData={setGridPaymentData} />
                         </ModalBody>
                     </ModalContainer>
                 </ModalOverlay>

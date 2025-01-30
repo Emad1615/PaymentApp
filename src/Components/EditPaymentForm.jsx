@@ -5,7 +5,8 @@ import { ClipLoader } from 'react-spinners';
 import { BiSolidSave } from 'react-icons/bi';
 import { Container } from 'react-bootstrap';
 import EditRunTimeTable from './EditRunTimeTable';
-import { getAllPaymentByFilters } from '../Services/paymentService';
+import { getAllPaymentByFilters, updatePaymentSettingList } from '../Services/paymentService';
+import toast from 'react-hot-toast';
 
 const Overlay = styled.div`
   position: absolute;
@@ -20,7 +21,7 @@ const Overlay = styled.div`
   z-index: 10;
 `;
 
-function EditPaymentForm({ rowData, gridPaymentData, setGridPaymentData }) {
+function EditPaymentForm({ setShowModal, rowData, gridPaymentData, setGridPaymentData }) {
   const [loading, setLoading] = useState(false);
   const [editingData, setEditingData] = useState([]);
 
@@ -33,12 +34,13 @@ function EditPaymentForm({ rowData, gridPaymentData, setGridPaymentData }) {
         const filterPaymentObj = {
           paymentTypeId: rowData.paymentTypeId,
           educationYearId: rowData.educationYearId,
-          branchIds : [rowData.branchId] ,
-          educationTypeIds :[rowData.educationTypeId]
+          branchIds: [rowData.branchId],
+          educationTypeIds: [rowData.educationTypeId]
         }
         const response = await getAllPaymentByFilters(filterPaymentObj);
         if (response.success) {
           setEditingData(response.data);
+          console.log(editingData);
         }
         setLoading(false);
       }
@@ -46,10 +48,30 @@ function EditPaymentForm({ rowData, gridPaymentData, setGridPaymentData }) {
     }
   }, [rowData]);
 
+  useEffect(() => {
+
+    console.log('log:For' + gridPaymentData);
+    console.log(gridPaymentData);
+
+  }, [gridPaymentData])
 
   const handleEditPaymentSave = async () => {
     setLoading(true);
+    let result = await updatePaymentSettingList(editingData);
+    console.log(result);
+    if (result.success) {
+      toast.success('تم تعديل أنظمة الدفع بنجاح');
 
+      const updatedGridPaymentData = [...gridPaymentData];
+      editingData.forEach((editItem) => {
+        const index = updatedGridPaymentData.findIndex((item) => item.id === editItem.id);
+        if (index !== -1) {
+          updatedGridPaymentData[index] = { ...updatedGridPaymentData[index], ...editItem };
+        }
+      });
+      setGridPaymentData(updatedGridPaymentData);
+      setShowModal(false);
+    }
     setLoading(false);
   };
   return (
@@ -68,7 +90,7 @@ function EditPaymentForm({ rowData, gridPaymentData, setGridPaymentData }) {
 
         <Button
           style={{ width: '100%', marginTop: '10px' }}
-          disabled={loading} type="button" variation="success" onClick={() => handleEditPaymentSave()}>
+          disabled={loading} type="button" variation="primary" onClick={() => handleEditPaymentSave()}>
           {loading ? <ClipLoader size={20} color={'#fff'} /> : <BiSolidSave />}
           حفـــظ
         </Button>

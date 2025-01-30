@@ -30,36 +30,6 @@ export const CheckBranchsOrEducationTypeHasPaymentType = async ({ paymentTypeId,
   }
 };
 
-
-export const getPaymentToEdit = async ({ branchId, educationTypeId, paymentTypeId, educationYearId }) => {
-  try {
-    const filterParams = {
-      paymentTypeId,
-      educationYearId,
-      branchIds : [branchId] ,
-      educationTypeIds :[educationTypeId]
-    }
-    const response = await axios.post(`${config.API_BASE_URL}/Payment/GetPaymentByFilter`,filterParams);
-    if (response.data.success) {
-      return response.data;
-    } else {
-      if (response.data.errors && response.data.errors.length > 0) {
-        response.data.errors.forEach((error) => { toast.error(error); });
-      }
-      else { toast.error('حدث خطأ.'); }
-      return response.data;
-    }
-  } catch (error) {
-    console.log('Error CheckDefault Payment:', error);
-    if (error.response.data.errors && error.response.data.errors.length > 0) {
-      error.response.data.errors.forEach((error) => { toast.error(error); });
-    }
-    else { toast.error('حدث خطأ.'); }
-    return error.response.data;
-  }
-};
-
-
 export const getAllPaymentByFilters = async ({ paymentTypeId, educationYearId, branchIds, educationTypeIds }) => {
   try {
     const response = await axios.post(`${config.API_BASE_URL}/Payment/GetPaymentByFilter`, { paymentTypeId, educationYearId, branchIds, educationTypeIds });
@@ -110,10 +80,10 @@ export const createPaymentSettingByList = async (newPayment) => {
 };
 
 
-// Save Payment Type
+// Edit Payment Type
 export const updatePaymentSettingList = async (PaymentList) => {
   try {
-    const response = await axios.post(`${config.API_BASE_URL}/Payment/UpdatePaymentList`, PaymentList);
+    const response = await axios.put(`${config.API_BASE_URL}/Payment/UpdateListOfPayments`, PaymentList);
     if (response.data.success) {
       return response.data;
     } else {

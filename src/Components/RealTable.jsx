@@ -1,14 +1,14 @@
 import { DataGrid } from 'devextreme-react';
 import { Column, FilterRow, GroupPanel, Pager, Paging } from 'devextreme-react/cjs/data-grid';
 import { useEffect } from 'react';
-import { BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
-import Button from '../ui/Button';
 import EditPaymentModal from './EditPaymentModal';
 
 function RealTable({ loading, gridPaymentData, setGridPaymentData }) {
 
   useEffect(() => {
     
+    console.log('logtbl:' + gridPaymentData);
+    console.log(gridPaymentData);
   }, [gridPaymentData]);
 
   const renderCellActions = (cellData) => {
@@ -46,8 +46,8 @@ function RealTable({ loading, gridPaymentData, setGridPaymentData }) {
         <Column dataField="educationTypeName" caption="نـوع التعليــم" allowSorting={false} />
         <Column dataField="paymentPercentage" caption="النســبة" allowSorting={false} />
         <Column dataField="paymentNumber" caption="رقــم الدفعــة" allowSorting={false} />
-        <Column dataField="paymentStartDate" caption="تاريــخ البــدء" dataType="date" allowSorting={false} />
-        <Column dataField="paymentEndDate" caption="تاريــخ الانتهــاء" dataType="date" allowSorting={false} />
+        <Column dataField="paymentStartDate" caption="تاريــخ البــدء" dataType="date"   format="yyyy-MM-dd" allowSorting={false} />
+        <Column dataField="paymentEndDate" caption="تاريــخ الانتهــاء" dataType="date"   format="yyyy-MM-dd" allowSorting={false} />
 
         <Column
           caption="الإجراءات"
@@ -61,24 +61,3 @@ function RealTable({ loading, gridPaymentData, setGridPaymentData }) {
 }
 
 export default RealTable;
-
-{/* <Button
-          disabled={loading}
-          type="button"
-          variation="primary"
-          style={{ width: '100%' }}
-          onClick={() => handleEditButtonClick(cellData.data)}  // Pass row data to the click handler
-        >
-          <BiSolidEdit />
-          تعديل
-        </Button> */}
-        {/* <Button
-          disabled={loading}
-          type="button"
-          variation="danger"
-          style={{ width: '100%' }}
-          onClick={() => console.log('Delete button clicked for row:', cellInfo.data)}  // You can add delete logic here
-        >
-          <BiSolidTrash />
-          حذف
-        </Button> */}
