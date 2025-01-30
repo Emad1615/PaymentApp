@@ -3,7 +3,7 @@ import Input from './../ui/Input';
 import { FaPercentage } from 'react-icons/fa';
 import styled from 'styled-components';
 import { addDays } from 'date-fns';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import { DateBox } from 'devextreme-react/date-box';
 import 'devextreme/dist/css/dx.common.css';
 
@@ -24,33 +24,34 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
   function adjustPercentages(newData)
   {
     let totalPercentage = newData.reduce(
-      (sum, item) => sum + parseFloat(item.percentage),
+      (sum, item) => sum + parseFloat(item.paymentPercentage),
       0
     );
 
     if (totalPercentage < 100)
     {
       const deficit = (100 - totalPercentage).toFixed(2);
-      newData[newData.length - 1].percentage = (
-        parseFloat(newData[newData.length - 1].percentage) + parseFloat(deficit)
+      newData[newData.length - 1].paymentPercentage = (
+        parseFloat(newData[newData.length - 1].paymentPercentage) + parseFloat(deficit)
       ).toFixed(2);
     }
 
     newData.forEach((item) =>
     {
-      if (item.percentage < 1)
+      if (item.paymentPercentage < 1)
       {
-        item.percentage = 1;
+        item.paymentPercentage = 1;
       }
     });
 
     return newData;
   }
 
-  useEffect(() =>
-  {
-    setEditingData(adjustPercentages(editingData));
-  }, [editingData, setEditingData]);
+//   useEffect(() =>
+//   {
+//    if(editingData && editingData.length > 0) 
+//     setEditingData(adjustPercentages(editingData));
+//   }, [editingData]);
 
 
   const percentageCell = (cellData) =>
@@ -74,12 +75,12 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
       // Update the percentage of the current row
       newData[index] = {
         ...newData[index],
-        percentage: newPercentage,
+        paymentPercentage: newPercentage,
       };
 
       // Calculate the total percentage of all rows
       let totalPercentage = newData.reduce(
-        (sum, item) => sum + parseFloat(item.percentage),
+        (sum, item) => sum + parseFloat(item.paymentPercentage),
         0
       );
 
@@ -92,10 +93,10 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
         {
           if (excess > 0)
           {
-            const currentValue = parseFloat(newData[i].percentage);
+            const currentValue = parseFloat(newData[i].paymentPercentage);
             const maxReduce = currentValue - 1; // Ensure no percentage goes below 1
             const reduction = Math.min(excess, maxReduce);
-            newData[i].percentage = (currentValue - reduction).toFixed(2);
+            newData[i].paymentPercentage = (currentValue - reduction).toFixed(2);
             excess -= reduction;
           }
         }
@@ -106,17 +107,17 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
       {
         let deficit = 100 - totalPercentage;
         // Distribute the deficit percentage by adding to the last row
-        newData[newData.length - 1].percentage = (
-          parseFloat(newData[newData.length - 1].percentage) + deficit
+        newData[newData.length - 1].paymentPercentage = (
+          parseFloat(newData[newData.length - 1].paymentPercentage) + deficit
         ).toFixed(2);
       }
 
       // Ensure no percentage is less than 1
       newData.forEach((item) =>
       {
-        if (item.percentage < 1)
+        if (item.paymentPercentage < 1)
         {
-          item.percentage = 1;
+          item.paymentPercentage = 1;
         }
       });
 
@@ -128,7 +129,7 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
         <Input
           type="text"
           style={{ width: '100%', borderRadius: '0px' }}
-          defaultValue={cellData.key.percentage}
+          defaultValue={cellData.key.paymentPercentage}
           onBlur={handleChange}
           onKeyDown={handleKeyDown}
           min={1}
@@ -152,25 +153,25 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
     // Update the startDate and endDate of the current row
     newData[index] = {
       ...newData[index],
-      startDate: selectedDate.toISOString().split('T')[0],
-      endDate: addDays(selectedDate, 1).toISOString().split('T')[0], // endDate 1 day after startDate
+      paymentStartDate: selectedDate.toISOString().split('T')[0],
+      paymentEndDate: addDays(selectedDate, 1).toISOString().split('T')[0], // endDate 1 day after startDate
     };
 
     // Update the rows after the modified row
     for (let i = index + 1; i < newData.length; i++)
     {
-      const newStartDate = addDays(new Date(newData[i - 1].endDate), 1).toISOString().split('T')[0];
-      const newEndDate = addDays(new Date(newData[i - 1].endDate), 2).toISOString().split('T')[0];
+      const newStartDate = addDays(new Date(newData[i - 1].paymentEndDate), 1).toISOString().split('T')[0];
+      const newEndDate = addDays(new Date(newData[i - 1].paymentEndDate), 2).toISOString().split('T')[0];
 
       newData[i] = {
         ...newData[i],
-        startDate: newStartDate,
+        paymentStartDate: newStartDate,
       };
-      if (newData[i].endDate <= newEndDate)
+      if (newData[i].paymentEndDate <= newEndDate)
       {
         newData[i] = {
           ...newData[i],
-          endDate: newEndDate,
+          paymentEndDate: newEndDate,
         };
       }
     }
@@ -187,23 +188,23 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
     // Update the endDate of the current row
     newData[index] = {
       ...newData[index],
-      endDate: selectedDate.toISOString().split('T')[0],
+      paymentEndDate: selectedDate.toISOString().split('T')[0],
     };
 
     // Update the rows after the modified row
     for (let i = index + 1; i < newData.length; i++)
     {
-      const newStartDate = addDays(new Date(newData[i - 1].endDate), 1).toISOString().split('T')[0];
-      const newEndDate = addDays(new Date(newData[i - 1].endDate), 2).toISOString().split('T')[0];
+      const newStartDate = addDays(new Date(newData[i - 1].paymentEndDate), 1).toISOString().split('T')[0];
+      const newEndDate = addDays(new Date(newData[i - 1].paymentEndDate), 2).toISOString().split('T')[0];
       newData[i] = {
         ...newData[i],
-        startDate: newStartDate, // Ensure startDate is 1 day after previous row's endDate
+        paymentStartDate: newStartDate, // Ensure startDate is 1 day after previous row's endDate
       };
-      if (newData[i].endDate <= newEndDate)
+      if (newData[i].paymentEndDate <= newEndDate)
       {
         newData[i] = {
           ...newData[i],
-          endDate: newEndDate,
+          paymentEndDate: newEndDate,
         };
       }
     }
@@ -214,13 +215,13 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
   function startDateCell(cellData)
   {
     const index = editingData.findIndex((item) => item.id === cellData.data.id);
-    const minDate = index === 0 ? null : addDays(new Date(editingData[index - 1].endDate), 1).toISOString().split('T')[0];
+    const minDate = index === 0 ? null : addDays(new Date(editingData[index - 1].paymentEndDate), 1).toISOString().split('T')[0];
     return (
       <>
          <DateBox
           type="date"
           style={{ width: '100%', borderRadius: '0px' }}
-          defaultValue={cellData.key.startDate}
+          defaultValue={cellData.key.paymentStartDate}
           onValueChanged={(e) => handleStartDateChange(e, cellData)}
           min={minDate}
           displayFormat="yyyy-MM-dd"
@@ -231,14 +232,14 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
   function endDateCell(cellData)
   {
     const index = editingData.findIndex((item) => item.id === cellData.data.id);
-    const minDate = addDays(new Date(editingData[index].startDate), 1).toISOString().split('T')[0];
+    const minDate = addDays(new Date(editingData[index].paymentStartDate), 1).toISOString().split('T')[0];
 
     return (
       <>
         <DateBox
           type="date"
           style={{ width: '100%', borderRadius: '0px' }}
-          defaultValue={cellData.key.endDate}
+          defaultValue={cellData.key.paymentEndDate}
           onValueChanged={(e) => handleEndDateChange(e, cellData)}
           min={minDate}
           displayFormat="yyyy-MM-dd"
@@ -255,8 +256,8 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
     let firstYear = 'لم يتم الإختيار';
     if (!(!dataSource || dataSource.length === 0))
     {
-      firstPaymentType = dataSource[0].paymentType;
-      firstYear = dataSource[0].year;
+      firstPaymentType = dataSource[0].paymentTypeName;
+      firstYear = dataSource[0].educationYear;
     }
     const headerRow = grid._$element.find(".dx-datagrid-headers");
     if (!headerRow.find(".custom-header-row").length)
@@ -278,27 +279,27 @@ function EditRunTimeTable({ editingData, setEditingData, loading })
         disabled={loading}
         onContentReady={handleDevContentReady} >
 
-        <Column dataField="paymentType" caption="نوع الدفع" visible={false} allowSorting={false} />
-        <Column dataField="year" caption="العام الدراسي" visible={false} allowSorting={false} />
-        <Column dataField="branchs" caption="الفـــروع" allowSorting={false} />
-        <Column dataField="educationTypes" caption="نـوع التعليــم" allowSorting={false} />
-        <Column dataField="id" caption="رقـم الدفعــة"  allowSorting={false} />
+        <Column dataField="paymentTypeName" caption="نوع الدفع"  visible={false} allowSorting={false}  />
+        <Column dataField="educationYear" caption="العام الدراسي" visible={false} allowSorting={false} />
+        <Column dataField="branchName" caption="الفـــروع" minWidth={100} allowSorting={false} />
+        <Column dataField="educationTypeName" caption="نـوع التعليــم" minWidth={100} allowSorting={false} />
+        <Column dataField="paymentNumber" caption="رقـم الدفعــة" minWidth={100} allowSorting={false} />
         <Column
-          dataField="percentage"
+          dataField="paymentPercentage"
           caption="النســبة"
-          minWidth={150}
+          minWidth={120}
           cellRender={percentageCell} allowSorting={false}
         />
         <Column
-          dataField="startDate"
+          dataField="paymentStartDate"
           caption="تاريــخ البــدء"
-          minWidth={220}
+          minWidth={170}
           cellRender={startDateCell} allowSorting={false}
         />
         <Column
-          dataField="endDate"
+          dataField="paymentEndDate"
           caption="تاريــخ الانتهــاء"
-          minWidth={220}
+          minWidth={170}
           cellRender={endDateCell} allowSorting={false}
         />
         <Paging defaultPageSize={10} />

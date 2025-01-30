@@ -1,25 +1,11 @@
-import Switch from 'react-switch';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import Button from '../ui/Button';
-import InputSpinner from './../ui/InputSpinner';
-import { FaRegSave } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';
-import { getPaymentTypeList } from '../Services/paymentTypeService';
 import { BiSolidSave } from 'react-icons/bi';
 import { Container } from 'react-bootstrap';
 import EditRunTimeTable from './EditRunTimeTable';
-
-const Input = styled.input`
-  padding: 8px;
-  border: 1px solid #ccc;
-`;
-
-const ErrorText = styled.div`
-  color: red;
-  font-size: 12px;
-  margin-top: 4px;
-`;
+import { getPaymentToEdit } from '../Services/paymentService';
 
 const Overlay = styled.div`
   position: absolute;
@@ -40,21 +26,24 @@ function EditPaymentForm({ rowData, gridPaymentData, setGridPaymentData }) {
 
 
   async function fetchEditedPaymentList() {
+    setLoading(true);
+
     const filterPaymentObj = {
       branchId: rowData.branchId,
       educationTypeId: rowData.educationTypeId,
       paymentTypeId: rowData.paymentTypeId,
       educationYearId: rowData.educationYearId
     }
-    const response = await getPaymentTypeList(filterPaymentObj);
+    const response = await getPaymentToEdit(filterPaymentObj);
     if (response.success) {
-      setEditingData(response.data.map(item => ({ value: item.id, label: item.name, number: item.paymentNo })));
+      setEditingData(response.data);
     }
+    setLoading(false);
   }
 
   useEffect(() => {
-    fetchEditedPaymentList();
-  }, [rowData]);
+    if (rowData) fetchEditedPaymentList();
+  }, [rowData, fetchEditedPaymentList]);
 
 
   const handleEditPaymentSave = async () => {
@@ -74,7 +63,10 @@ function EditPaymentForm({ rowData, gridPaymentData, setGridPaymentData }) {
           setEditingData={setEditingData}
           loading={loading}
         />
-        <Button disabled={loading} type="button" variation="success" onClick={() => handleEditPaymentSave()}>
+
+        <Button
+          style={{ width: '100%', marginTop: '10px' }}
+          disabled={loading} type="button" variation="success" onClick={() => handleEditPaymentSave()}>
           {loading ? <ClipLoader size={20} color={'#fff'} /> : <BiSolidSave />}
           حفـــظ
         </Button>
