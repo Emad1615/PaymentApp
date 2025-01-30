@@ -11,9 +11,13 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import RunTimeTable from './RunTimeTable';
 import { BiSolidSave } from 'react-icons/bi';
-import { CheckBranchsOrEducationTypeHasPaymentType, createPaymentSettingByList } from '../Services/paymentService';
+import { CheckBranchsOrEducationTypeHasPaymentType, createPaymentSettingByList, getAllPaymentByFilters } from '../Services/paymentService';
 import Swal from 'sweetalert2';
-import { getPaymentTypes } from '../Services/paymentTypeService';
+import { getPaymentTypeList } from '../Services/paymentTypeService';
+import { getBranchesList } from '../Services/branchService';
+import { getEducationTypeList } from '../Services/educationTypeService';
+import { getEducationYearList } from '../Services/educationYearService';
+import RealTable from './RealTable';
 
 const Container = styled.div`
   margin: 2rem 0;
@@ -43,33 +47,62 @@ const spinnerStyle = {
   color: '#fff',
   borderRadius: '5px',
 };
-function PaymentForm()
-{
+function PaymentForm() {
   const [paymentType, setPaymentType] = useState(null);
   const [year, setYear] = useState(null);
   const [branchs, setBranchs] = useState([]);
   const [educationTypes, setEducationTypes] = useState([]);
   const [data, setData] = useState([]);
-  const [realData, setRealData] = useState([]);
+  const [gridPaymentData, setGridPaymentData] = useState([]);
   const [showRealTable, setShowRealTable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [paymentList, setPaymentList] = useState([]); 
+  const [paymentList, setPaymentList] = useState([]);
   const [yearList, setYearsList] = useState([]);
-  const [branchList, setBrancheList] = useState([]); 
+  const [branchList, setBrancheList] = useState([]);
   const [educationTypeList, setEducationTypeList] = useState([]);
 
-  function handleAddPayment()
-  {
-    if (!paymentType || !year || !branchs.length || !educationTypes.length)
-    {
+  async function handleRealPayment() {
+    setLoading(true);
+
+    const filterPaymentData = {
+      paymentTypeId: paymentType?.value ?? null,
+      educationYearId: year?.value ?? null,
+      branchIds: branchs?.map(item => item.value) ?? [],
+      educationTypeIds: educationTypes?.map(item => item.value) ?? []
+    };
+    const response = await getAllPaymentByFilters(filterPaymentData);
+    if (response.success) {
+      const paymentByFilters = response.data.map(item => ({
+          id: item.id,
+          paymentTypeId: item.paymentTypeId,
+          paymentTypeName: item.paymentTypeName,
+          branchId: item.branchId,
+          branchName: item.branchName,
+          educationTypeId: item.educationTypeId,
+          educationTypeName: item.educationTypeName,
+          educationYearId: item.educationYearId,
+          educationYear: item.educationYear,
+          paymentNumber: item.paymentNumber,
+          paymentPercentage: item.paymentPercentage,
+          paymentStartDate: new Date(item.paymentStartDate),  // Convert to Date object
+          paymentEndDate: new Date(item.paymentEndDate),    // Convert to Date object
+        }));
+
+  setGridPaymentData(paymentByFilters);
+      setShowRealTable(true);
+    } else {
+      setGridPaymentData([]);
+    }
+    setData([]);
+    setLoading(false);
+  }
+
+  /***************** Handel Payment ******************/
+  function handleAddPayment() {
+    if (!paymentType || !year || !branchs.length || !educationTypes.length) {
       toast.error(`يجب اختيار نوع الدفع والعام الدراسي والفروع ونوع التعليم`);
       return;
     }
-    // if (data.length === paymentType.number)
-    // {
-    //   toast.error(`تم اضافة الدفعات بالفعل`);
-    //   return;
-    // }
     setLoading(true);
     let Arr = [];
     Array.from({ length: paymentType.number }, (_, i) => i).map((_, idx) =>
@@ -94,25 +127,12 @@ function PaymentForm()
       }),
     );
     setData(Arr);
-    setRealData([]);
+  setGridPaymentData([]);
     setShowRealTable(false);
     setLoading(false);
   }
 
-  function handleRealPayment()
-  {
-    setLoading(true);
-    setTimeout(() =>
-    {
-      setRealData(PaymentSettings);
-      setData([]);
-      setShowRealTable(true);
-      setLoading(false);
-    }, 2000);
-  }
-
-  async function handlePaymentSave()
-  {
+  async function handlePaymentSave() {
     const checkPaymentData = {
       paymentTypeId: paymentType.value,
       yearId: year.value,
@@ -121,10 +141,8 @@ function PaymentForm()
     };
     //Check if One Of the Branchs or EducationType has this Payment Type before
     const response = await CheckBranchsOrEducationTypeHasPaymentType(checkPaymentData);
-    if (response.success)
-    {
-      if (response.data.length > 0)
-      {
+    if (response.success) {
+      if (response.data.length > 0) {
         const foundPaymentsTable = `
           <table class="swal-table">
             <thead>
@@ -155,20 +173,17 @@ function PaymentForm()
           confirmButtonText: 'نعم, استبدال',
           cancelButtonText: 'إلغاء',
         });
-        if (!result.isConfirmed)
-        {
+        if (!result.isConfirmed) {
           return;
         }
       }
-    } else
-    {
+    } else {
       return;
     }
 
 
     setLoading(true);
-    const createPaymentSettingData = data.map(item =>
-    {
+    const createPaymentSettingData = data.map(item => {
       return {
         paymentNumber: item.id,
         paymentTypeId: item.paymentTypeId,
@@ -182,56 +197,70 @@ function PaymentForm()
     })
     let result = await createPaymentSettingByList(createPaymentSettingData);
     console.log(result);
-    if (result.success)
-    {
+    if (result.success) {
       toast.success('تم إضافة أنظمة الدفع بنجاح');
       clearData();
     }
     setLoading(false);
 
   }
+  /******** End Handel Payment Save  *********/
 
-  function clearData()
-  {
+  /******** Start Clear Search And Grid  *********/
+  function clearData() {
     setPaymentType(null);
     setYear(null);
     setBranchs(null);
     setEducationTypes([]);
     setData([]);
-    setRealData([]);
+    setGridPaymentData([]);
     setShowRealTable(false);
   }
-  useEffect(()=>{
+  /******** End Clear Function  *********/
 
-    const getPaymentList = async () => {
-      const response = await getPaymentTypes();
-      if (response.success) {
-        setPaymentList(response.data.map(item => ({ value: item.id, label: item.name })));
-      }
+  /******** Start Bind Drop Down  *********/
+  const updatePaymentList = () => {
+    fetchPaymentList();
+  };
+
+  async function fetchPaymentList() {
+    const response = await getPaymentTypeList();
+    if (response.success) {
+      setPaymentList(response.data.map(item => ({ value: item.id, label: item.name, number: item.paymentNo })));
     }
-    const getYearsList = async () => {
-      const response = await getYearsList();
-      if (response.success) {
-        setYearsList(response.data.map(item => ({ value: item.id, label: item.year })));
-      }
+  }
+  async function fetchYearsList() {
+    const response = await getEducationYearList();
+    if (response.success) {
+      setYearsList(response.data.map(item => ({ value: item.id, label: item.year })));
     }
-    const getBranchList = async () => {
-      const response = await getBranchList();
-      if (response.success) {
-        setBrancheList(response.data.map(item => ({ value: item.id, label: item.name })));
-      }
+  }
+
+  async function fetchBranchList() {
+    const response = await getBranchesList();
+    if (response.success) {
+      setBrancheList(response.data.map(item => ({ value: item.id, label: item.name })));
     }
-    const getEducationTypeList = async () => {
-      const response = await getEducationTypeList();
-      if (response.success) {
-        setEducationTypeList(response.data.map(item => ({ value: item.id, label: item.name })));
-      }
+  }
+  async function fetchEducationType() {
+    const response = await getEducationTypeList();
+    if (response.success) {
+      setEducationTypeList(response.data.map(item => ({ value: item.id, label: item.name })));
     }
-    getPaymentList();
-    getYearsList();
-    getBranchList();
-    getEducationTypeList();
-  },[])
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    fetchPaymentList();
+    fetchYearsList();
+    fetchBranchList();
+    fetchEducationType();
+    setLoading(false);
+  }, [])
+
+  /******** End Bind Drop Down  *********/
+
+
   return (
     <>
       <Container>
@@ -243,7 +272,7 @@ function PaymentForm()
             setValue={setPaymentType}
             placeholder="اختر نوع الدفع"
           />
-          <AddPaymentTypeModal paymentType={paymentType} setPaymentType={setPaymentType} />
+          <AddPaymentTypeModal updatePaymentList={updatePaymentList} paymentType={paymentType} setPaymentType={setPaymentType} />
         </Row>
         <Row>
           <CustomSelect
@@ -317,11 +346,11 @@ function PaymentForm()
       )}
       {showRealTable && (
         <Container>
-          <RunTimeTable
-            data={realData}
+          <RealTable
+            gridPaymentData={gridPaymentData}
             loading={loading}
-            setData={setRealData}
-          />
+            setGridPaymentData={setGridPaymentData}
+  />
         </Container>
       )}
     </>
@@ -329,55 +358,3 @@ function PaymentForm()
 }
 
 export default PaymentForm;
-
-const paymentTypes = [
-  { value: 1, label: 'دفعة واحدة', number: 1 },
-  { value: 2, label: 'دفعتين ', number: 2 },
-  { value: 3, label: '3 دفعات', number: 3 },
-];
-const Years = [
-  { value: 1, label: 2024 },
-  { value: 2, label: 2025 },
-  { value: 3, label: 2026 },
-];
-const Branches = [
-  { value: 1, label: 'فرع 1' },
-  { value: 2, label: '2 فرع' },
-  { value: 3, label: 'فرع 3' },
-];
-const Education = [
-  { value: 1, label: 'اهلي' },
-  { value: 2, label: 'عالمي' },
-  { value: 3, label: 'مصري' },
-];
-
-const PaymentSettings = [
-  {
-    value: 1,
-    educationTypeId: 1,
-    educationType: 'اهلي',
-    branchId: 1,
-    branch: 'فرع 1',
-    yearId: 1,
-    year: 2025,
-    paymentTypeId: 2,
-    paymentType: 'دفعتين',
-    percentage: 50,
-    startDate: '2025-01-01',
-    endDate: '2025-01-31',
-  },
-  {
-    value: 2,
-    educationTypeId: 1,
-    educationType: 'اهلي',
-    branchId: 1,
-    branch: 'فرع 1',
-    yearId: 1,
-    year: 2025,
-    paymentTypeId: 2,
-    paymentType: 'دفعتين',
-    percentage: 50,
-    startDate: '2025-02-01',
-    endDate: '2025-03-31',
-  },
-];

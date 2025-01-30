@@ -3,11 +3,11 @@ import { config } from '../config';
 import toast from 'react-hot-toast';
 
 // Fetch All Payment Types
-export const getPaymentTypes = async () => {
+export const getPaymentTypeList = async () => {
   try {
     const response = await axios.get(`${config.API_BASE_URL}/PaymentType/GetAll`);
     if (response.data.success) {
-      return response.data.data;
+      return response.data;
     } else {
       if (response.data.errors && response.data.errors.length > 0) {
         response.data.errors.forEach((error) => { toast.error(error); });

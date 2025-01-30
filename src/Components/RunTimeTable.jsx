@@ -211,20 +211,14 @@ function RunTimeTable({ data, setData, loading })
 
     setData(newData);
   }
+
   function startDateCell(cellData)
   {
     const index = data.findIndex((item) => item.id === cellData.data.id);
     const minDate = index === 0 ? null : addDays(new Date(data[index - 1].endDate), 1).toISOString().split('T')[0];
     return (
       <>
-        {/* <Input
-          type="date"
-          style={{ width: '100%', borderRadius: '0px' }}
-          defaultValue={cellData.key.startDate}
-          onChange={(e) => handleStartDateChange(e, cellData)}
-          min={minDate}
-        /> */}
-        <DateBox
+         <DateBox
           type="date"
           style={{ width: '100%', borderRadius: '0px' }}
           defaultValue={cellData.key.startDate}
@@ -242,15 +236,6 @@ function RunTimeTable({ data, setData, loading })
 
     return (
       <>
-        {/* <Input
-          type="date"
-          style={{ width: '100%', borderRadius: '0px' }}
-          defaultValue={cellData.key.endDate}
-          onChange={(e) => handleEndDateChange(e, cellData)}
-          min={minDate}
-        // onChange={(e) => console.log(e.target.value)}
-        // min={new Date().toISOString().split('T')[0]}
-        /> */}
         <DateBox
           type="date"
           style={{ width: '100%', borderRadius: '0px' }}
@@ -294,12 +279,11 @@ function RunTimeTable({ data, setData, loading })
         disabled={loading}
         onContentReady={handleDevContentReady} >
 
-        <Column dataField="id" caption="ID" visible={false} width={50} allowSorting={false} />
         <Column dataField="paymentType" caption="نوع الدفع" visible={false} allowSorting={false} />
         <Column dataField="year" caption="العام الدراسي" visible={false} allowSorting={false} />
         <Column dataField="branchs" caption="الفـــروع" allowSorting={false} />
         <Column dataField="educationTypes" caption="نـوع التعليــم" allowSorting={false} />
-
+        <Column dataField="id" caption="رقـم الدفعــة"  allowSorting={false} />
         <Column
           dataField="percentage"
           caption="النســبة"

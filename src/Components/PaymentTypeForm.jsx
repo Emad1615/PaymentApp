@@ -35,7 +35,7 @@ const Overlay = styled.div`
 `;
 
 
-function PaymentTypeForm({ paymentType, setPaymentType }) {
+function PaymentTypeForm({ updatePaymentList, paymentType, setPaymentType }) {
   const [id, setId] = useState(null);
   const [nameAr, setNameAr] = useState('');
   const [nameEn, setNameEn] = useState('');
@@ -184,6 +184,8 @@ function PaymentTypeForm({ paymentType, setPaymentType }) {
     }
     console.log(result);
     if (result.success) {
+      updatePaymentList();
+      setPaymentType({ value: newPaymentType.id, label: newPaymentType.name, number: newPaymentType.paymentNo });
       toast.success((id != null)?'تم التعديل بنجاح':'تم إضافة نوع الدفع بنجاح');
       clearPaymentTypeForm();
     }
